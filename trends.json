@@ -1,0 +1,87 @@
+{
+ "asOf": ["2026년 11월 16일 기준", "As of Nov 16, 2026"],
+ "updated": "2026-11-16",
+ "cats": {
+  "plan": [
+   {"t": ["가트너가 꼽은 2027 HR 우선순위", "Gartner's Top HR Priorities for 2027"],
+    "b": ["가트너는 2027년 CHRO의 핵심 과제로 HR의 '가치 전달 속도 높이기', AI에 대한 사람의 책임 강화, 차별화된 스킬 투자, 변화를 이끌 리더 준비를 꼽았습니다. 조사에서 CHRO의 67%는 직원 생산성에 대한 기대가 커졌다고 답했습니다.", "Gartner says the top tasks for HR leaders in 2027 are: deliver value faster, keep people responsible for AI, invest in key skills, and prepare leaders for change. In its survey, 67% of HR leaders said the company expects more productivity from employees."],
+    "src": {"name": "Gartner 보도자료 (2026.10.6)", "url": "https://www.gartner.com/en/newsroom/press-releases/2026-10-6-gartner-says-chros-top-priorities-for-2027-focus-on-meeting-ceos-expectations-while-minimizing-organizational-risk"}},
+   {"t": ["사람 중심 AI 전략이 없으면 인재가 떠난다", "No People-First AI Plan, No AI Talent"],
+    "b": ["가트너는 2027년까지 '사람 중심 AI 전략'이 없는 기업의 절반이 핵심 AI 인재를 잃을 것이라고 전망했습니다. AI 도입 계획에 교육, 역할 변화, 경력 경로를 함께 담아야 한다는 뜻입니다.", "Gartner predicts that by 2027, half of companies without a people-first AI plan will lose their best AI talent. An AI plan should also cover training, changing roles and career paths."],
+    "src": {"name": "Gartner 보도자료 (2026.5.13)", "url": "https://www.gartner.com/en/newsroom/press-releases/2026-05-13-gartner-predicts-by-2027-50-percent-of-enterprises-without-a-people-centric-ai-strategy-will-lose-their-top-ai-talent"}},
+   {"t": ["정년 65세 연장 논의 (논의 중)", "Retirement Age 65 Debate (Not Final)"],
+    "b": ["법정 정년은 아직 60세이며, 65세로 단계적으로 늘리는 법안은 국회를 통과하지 않았습니다(논의 중). 여당 특위 초안은 2029년부터 2년마다 1세씩 올려 2037년 65세에 이르는 안으로 알려졌고, 10월 말 연내 처리를 촉구하는 목소리가 나왔습니다. 인력계획에서는 고령 인력과 임금체계 변화를 미리 검토해 둘 필요가 있습니다.", "The legal retirement age is still 60. A bill to raise it step by step to 65 has not passed yet. A ruling party draft reportedly raises it by 1 year every 2 years from 2029, reaching 65 in 2037. HR planners should start thinking about older workers and pay systems now."],
+    "src": {"name": "뉴시스 via 네이트 뉴스 (2026.10.27)", "url": "https://news.nate.com/view/20261027n26599"}}
+  ],
+  "recruit": [
+   {"t": ["대기업 채용, 'AI 활용 능력'을 본다", "Big Firms Now Test AI Skills in Hiring"],
+    "b": ["국내 주요 대기업이 정기 공채보다 수시·상시 채용을 늘리면서, 지원자가 AI를 얼마나 잘 쓰는지를 평가하는 흐름이 커지고 있습니다. 일부 기업은 코딩테스트 대신 AI 도구로 실제 업무 문제를 푸는 평가를 도입했습니다.", "Big Korean companies are hiring more often throughout the year instead of once a year. They also check how well candidates use AI. Some firms replaced coding tests with tasks where people solve real work problems using AI tools."],
+    "src": {"name": "뉴시스", "url": "https://www.newsis.com/view/NISX20260618_0003674578"}},
+   {"t": ["AI 채용 도구, 법적 위험도 커진다", "AI Hiring Tools Bring Legal Risk"],
+    "b": ["미국에서는 워크데이(Workday) AI 채용 차별 소송이 진행 중이고, 캘리포니아는 2027년부터 자동화된 고용 결정에 사람의 감독을 요구합니다. SHRM은 HR이 경영진과 함께 회사의 AI 정책을 점검해야 한다고 강조했습니다.", "In the US, a lawsuit says Workday's AI hiring tool was unfair. From 2027, California will require human oversight of automated job decisions. SHRM says HR should review company AI rules together with top leaders."],
+    "src": {"name": "SHRM AI Unlocked (2026.11.9)", "url": "https://www.shrm.org/topics-tools/news/ai-unlocked-4-essential-things-to-know-this-week-november-9"}},
+   {"t": ["채용 담당자의 새 필수 역량: AI 리터러시", "Recruiters Need AI Literacy"],
+    "b": ["AI가 채용 업무 곳곳에 들어오면서, AI를 이해하고 잘 쓰는 능력이 채용 담당자의 핵심 역량이 되고 있습니다. 도구를 쓰는 법뿐 아니라 결과를 의심하고 확인하는 능력도 중요합니다.", "AI is now part of everyday recruiting work. So understanding and using AI well is becoming a core skill for recruiters. It is not only about using tools, but also checking whether AI results are right."],
+    "src": {"name": "SHRM", "url": "https://www.shrm.org/mena/topics-tools/news/talent-acquisition/ai-reshaping-recruiter-skills-training"}}
+  ],
+  "eval": [
+   {"t": ["AI로 쓰는 평가, 직원에게 알려야 할까", "AI-Written Reviews: Should Employees Know?"],
+    "b": ["한 조사에서 관리자의 78%가 최근 1년 동안 피드백이나 평가를 준비할 때 AI를 써 봤다고 답했습니다. 하지만 평가에 AI가 쓰였다고 안내받은 직원은 16%뿐이었습니다. AI 사용 사실과 방식을 투명하게 알리는 것이 신뢰의 조건으로 떠올랐습니다.", "In one survey, 78% of managers said they used AI to prepare feedback or reviews in the last year. But only 16% of employees were told AI was used in their review. Being open about AI use is now key to trust."],
+    "src": {"name": "HCAMag", "url": "https://www.hcamag.com/ca/specialization/employee-engagement/should-managers-be-using-ai-for-employee-feedback-and-performance-reviews/592833"}},
+   {"t": ["AI로 관리자 결정을 다시 점검", "Using AI to Double-Check Manager Decisions"],
+    "b": ["HR 플랫폼 하이밥(HiBob) 조사에서 HR 리더의 73%가 AI로 얻은 정보를 근거로 관리자의 결정에 이의를 제기한 적이 있다고 답했습니다. 주로 승진, 연봉 인상, 감원 결정이었습니다. 다만 한 기업의 조사이므로 방향을 보는 참고 자료로 보세요.", "In a HiBob survey, 73% of HR leaders said they used AI data to question a manager's decision. These were mostly about promotions, pay raises and layoffs. It is one company's survey, so use it as a general signal."],
+    "src": {"name": "HR Dive", "url": "https://hrdive.com/news/can-ai-root-out-manager-bias/874657"}}
+  ],
+  "comp": [
+   {"t": ["2027년 최저임금 시급 10,700원 (확정)", "2027 Minimum Wage: ₩10,700 per Hour (Final)"],
+    "b": ["2027년 최저임금은 시간당 10,700원으로 확정되었습니다. 2026년(10,320원)보다 3.7% 오른 금액이며, 월 209시간 기준으로 2,236,300원입니다. 2027년 1월 1일부터 모든 사업장에 똑같이 적용되므로 연봉·시급 체계를 미리 점검해야 합니다.", "The 2027 minimum wage is final at ₩10,700 per hour. That is 3.7% more than 2026 (₩10,320), or ₩2,236,300 a month for 209 hours. It applies to all workplaces from January 1, 2027, so check your pay tables now."],
+    "src": {"name": "다음 뉴스 (2026.7.15)", "url": "https://v.daum.net/v/20260715085108633"}},
+   {"t": ["미국 2027년 임금 인상 예산은 '보통 수준'", "US Pay Raise Budgets for 2027 Stay Moderate"],
+    "b": ["머서(Mercer) 조사에 따르면 미국 기업들은 2027년 평균 성과 인상률 3.2%, 승진 등을 포함한 전체 인상률 3.5%를 계획하고 있습니다. 큰 폭의 인상보다는 핵심 인재에 더 집중하는 '선택과 집중' 보상이 강조됩니다.", "A Mercer survey says US companies plan an average 3.2% merit raise and 3.5% total raise for 2027. Instead of big raises for everyone, companies focus more money on key people."],
+    "src": {"name": "Mercer", "url": "https://www.mercer.com/en-us/about/newsroom/us-employers-stick-with-moderate-pay-increases-for-2027/"}}
+  ],
+  "ops": [
+   {"t": ["포괄임금제 금지법 국회 심사 (논의 중)", "Ban on All-Inclusive Wage Pay: Under Review"],
+    "b": ["포괄임금제를 금지하거나 제한하는 근로기준법 개정안이 국회 고용노동법안심사소위에서 심사되고 있지만, 아직 통과·시행되지 않았습니다(논의 중). '전면 금지'안과 '합의 시 허용'안이 함께 논의됩니다. 고용노동부의 포괄임금 오남용 방지 지침은 2026년 2월부터 이미 시행 중입니다.", "A bill to ban or limit all-inclusive (fixed overtime) pay is being reviewed in the National Assembly. It is not law yet. One version bans it fully; another allows it with agreement. A Ministry guideline against misuse has already applied since February 2026."],
+    "src": {"name": "매일노동뉴스", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=233684"}},
+   {"t": ["위험성평가 지침 전면 개정 (확정)", "Risk Assessment Guideline Fully Revised (Final)"],
+    "b": ["고용노동부는 11월 4일 「사업장 위험성평가에 관한 지침」 전부개정을 발령했습니다(확정). 노동자대표가 원하면 참여시켜야 하고, 신규 입사자에게는 작업 전에 평가 결과를 알려야 합니다. 위험성평가 미실시 과태료는 50인 이상 사업장에 2027년 1월, 50인 미만은 2028년 1월부터 적용됩니다.", "On November 4, the Ministry issued a fully revised workplace risk assessment guideline. Worker representatives must be included if they ask, and new hires must see results before starting work. Fines for not doing assessments start in January 2027 for firms with 50+ workers, and January 2028 for smaller firms."],
+    "src": {"name": "고용노동부 보도자료", "url": "https://moel.go.kr/news/enews/report/enewsView.do?news_seq=20194"}},
+   {"t": ["고용보험, '시간' 대신 '소득' 기준으로", "Employment Insurance Moves to Income Basis"],
+    "b": ["고용보험 가입 기준을 근로시간에서 소득(보수)으로 바꾸는 법 개정은 이미 공포되어 2027년 1월 1일 시행됩니다(확정). 반면 실업급여 계산 방식 변경과 보험료율 1.8%→2.0% 인상은 정부 개편 방안 단계로, 국회 논의가 남아 있습니다(논의 중).", "The law changing the employment insurance rule from working hours to income is final and starts January 1, 2027. But changes to unemployment benefits and raising the premium from 1.8% to 2.0% are only proposals and still need approval."],
+    "src": {"name": "뉴시스 (2026.7.10)", "url": "https://www.newsis.com/view/NISX20260710_0003703799"}}
+  ],
+  "talent": [
+   {"t": ["리더 준비가 안 됐다는 CHRO 68%", "68% of HR Leaders Say Leaders Aren't Ready"],
+    "b": ["가트너 조사에서 CHRO의 68%가 '우리 리더들은 다가올 변화에 준비되어 있지 않다'고 답했습니다. 중간관리자 층이 줄어드는 가운데, 남은 리더가 AI와 변화를 이끌 수 있도록 키우는 것이 중요한 육성 과제가 되었습니다.", "In a Gartner survey, 68% of HR leaders said their leaders are not ready for what comes next. As companies cut middle-manager layers, growing the remaining leaders to lead AI and change is a top task."],
+    "src": {"name": "Gartner HR Symposium 하이라이트", "url": "https://www.gartner.com/en/newsroom/press-releases/2026-10-6-gartner-hr-symposium-xpo-london-day-1-highlights"}},
+   {"t": ["모든 스킬이 아니라 '차별화 스킬'에 집중", "Focus on the Few Skills That Matter Most"],
+    "b": ["생산성 압박이 커지고 신입 채용은 줄면서, 가트너는 모든 스킬을 키우기보다 회사의 경쟁력을 만드는 소수의 핵심 스킬에 투자하라고 조언했습니다. 육성 예산을 어디에 쓸지 우선순위를 정하는 일이 중요해졌습니다.", "With more pressure on productivity and fewer entry-level hires, Gartner advises investing in a small set of skills that make the company stand out, not every skill. Choosing where to spend the training budget matters more now."],
+    "src": {"name": "Gartner 2027 HR Trends", "url": "https://www.gartner.com/en/human-resources/trends/top-priorities-for-hr-leaders"}}
+  ],
+  "design": [
+   {"t": ["교육 과정 목록에서 'AI 기반 학습'으로", "From Course Catalogs to AI-Powered Learning"],
+    "b": ["조시 버신(Josh Bersin) 연구에 따르면 기업들은 매년 4천억 달러 이상을 교육에 쓰지만, 74%는 새로운 AI 스킬 수요를 따라가지 못한다고 답했습니다. 연구는 정해진 과정 목록 대신, 필요할 때 AI가 맞춤 학습을 제공하는 방식으로 설계를 바꿔야 한다고 제안합니다.", "Josh Bersin's research says companies spend over $400 billion a year on training, but 74% still can't keep up with the need for new AI skills. It suggests moving from fixed course lists to AI that gives the right learning when people need it."],
+    "src": {"name": "The Josh Bersin Company", "url": "https://joshbersin.com/2026/02/new-research-how-ai-transforms-400-billion-of-corporate-learning/"}},
+   {"t": ["경력 목표와 연결된 학습 설계", "Link Learning to Career Goals"],
+    "b": ["링크드인 직장 학습 보고서에 따르면 사람들이 배우는 가장 큰 이유는 '경력 성장'이며, 경력 목표를 세운 학습자는 학습 참여가 훨씬 높았습니다. 교육을 기획할 때 과정과 경력 경로, 사내 프로젝트를 함께 연결하는 것이 효과적입니다.", "LinkedIn's Workplace Learning Report says career growth is the number one reason people learn. Learners with career goals take part much more. When planning training, connect courses to career paths and internal projects."],
+    "src": {"name": "LinkedIn Workplace Learning Report", "url": "https://business.linkedin.com/learn/resources/workplace-learning-report"}}
+  ],
+  "measure": [
+   {"t": ["교육 효과를 '사업 성과'로 증명하기", "Proving Training Through Business Results"],
+    "b": ["헴슬리 프레이저(Hemsley Fraser)의 2026 L&D 조사에서 '사업 성과 지원'은 교육 전략의 두 번째로 큰 동기였습니다. 하지만 커크패트릭 단계별 평가 활용은 1년 동안 3% 늘어나는 데 그쳐, 측정은 여전히 느리게 발전하고 있습니다.", "In Hemsley Fraser's 2026 L&D survey, supporting business results was the second biggest goal of training plans. But use of Kirkpatrick-level evaluation grew only 3% in a year, so measuring is still slow to improve."],
+    "src": {"name": "Hemsley Fraser 2026 L&D Impact Survey", "url": "https://www.hemsleyfraser.com/2026-ld-impact-survey"}},
+   {"t": ["AI 학습 효과, '사용률'만 보고 있다", "AI Learning Is Measured by Usage, Not Impact"],
+    "b": ["한 L&D 업계 조사에서 AI 교육의 효과를 볼 때 가장 많이 쓰는 지표는 고객 피드백과 AI 기능 사용률이었고, 매출 효과를 보는 곳은 약 3분의 1에 그쳤습니다. 교육 전 기준값(베이스라인)을 정하고 경영진이 중요하게 보는 지표를 고르는 것이 첫걸음입니다.", "In one L&D industry survey, the most common ways to measure AI training were feedback and how much people used AI features. Only about one-third tracked sales impact. A good first step is to measure a starting point before training and choose numbers leaders care about."],
+    "src": {"name": "eLearning Industry", "url": "https://elearningindustry.com/fifty-three-percent-struggle-with-ai-what-is-ld-measuring"}}
+  ],
+  "culture": [
+   {"t": ["관리자 몰입도 하락이 문화를 흔든다", "Falling Manager Engagement Hurts Culture"],
+    "b": ["갤럽의 2026 글로벌 직장 보고서에서 전 세계 직원 몰입도는 20%로 5년 만에 가장 낮았습니다. 특히 관리자 몰입도가 1년 만에 27%에서 22%로 떨어진 것이 주된 원인으로 꼽혔습니다. 조직이 납작해지고 관리자 한 명이 맡는 인원이 늘어난 영향도 있습니다.", "Gallup's 2026 global report says only 20% of employees are engaged, the lowest in 5 years. The main reason is managers: their engagement fell from 27% to 22% in one year. Flatter companies and bigger teams per manager are part of the cause."],
+    "src": {"name": "HCAMag", "url": "https://www.hcamag.com/au/news/general/global-employee-engagement-slumps-to-5-year-low/571140"}},
+   {"t": ["미국 직원 몰입도, 15년 만에 30% 아래로", "US Engagement Drops Below 30%"],
+    "b": ["갤럽 분석에 따르면 2026년 3분기 미국 직원의 29%만 일에 몰입하고 있어, 2011년 이후 가장 낮은 수준입니다. 관리자 지원, 명확한 역할, 성장 기회처럼 기본적인 조직문화 요소를 다시 점검해야 한다는 신호입니다.", "Gallup says only 29% of US employees were engaged in Q3 2026, the lowest since 2011. It is a sign to check the basics of culture again: manager support, clear roles and chances to grow."],
+    "src": {"name": "Journal of Accountancy (2026.11)", "url": "https://www.journalofaccountancy.com/news/2026/nov/u-s-employee-engagement-falls-below-30-for-first-time-in-15-years/"}}
+  ]
+ }
+}

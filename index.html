@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HR 꾸러미</title>
+<meta name="description" content="HRM·HRD 용어와 트렌드를 한국어/영어로 보는 도트 스타일 HR 공부 앱">
+<meta name="theme-color" content="#E8F4FC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1826" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HR 꾸러미">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+/* page frame (the artifact viewer used to add this): keep content clear of the phone notch and home bar */
+html{box-sizing:border-box;color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Press+Start+2P&display=swap">
+<style>
+/* Layout: one phone-width column on a dot-grid ground; hard 3px outlines + offset pixel shadows; home = three stacked buttons with sprite characters */
+:root{
+  --bg:#E8F4FC; --dot:#C6E2F4;
+  --surface:#FFFFFF; --ink:#12304A; --muted:#4F6E86;
+  --line:#12304A; --soft-line:#BFDDF1; --shadow:#12304A;
+  --sky:#5BB4E8; --sky-deep:#1C76B5; --sky-soft:#D6ECFA;
+  --hrm:#7DC4EE; --hrd:#A8DAF5; --quiz:#CFEBFB; --on-sky:#0B2740;
+  --trend:#E3F6EA; --trend-ink:#1B6A43;
+  --ok:#23864F; --ok-soft:#DDF4E6; --bad:#C8423D; --bad-soft:#FBE1E0;
+  --scrim:rgba(18,48,74,.45);
+  --font-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --font-pixel:"Press Start 2P","IBM Plex Sans KR","Malgun Gothic",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1826; --dot:#173350; --surface:#12263B; --ink:#E2F1FC; --muted:#93B1C8;
+  --line:#7FBFE6; --soft-line:#24476A; --shadow:#02080F;
+  --sky:#6CC3F2; --sky-deep:#8FD2F7; --sky-soft:#18385A;
+  --hrm:#1F6FA6; --hrd:#2A84B8; --quiz:#3896C8; --on-sky:#F2FAFF;
+  --trend:#123526; --trend-ink:#8FE0B4;
+  --ok:#5FD69A; --ok-soft:#12382A; --bad:#FF8A85; --bad-soft:#3D1C1F;
+  --scrim:rgba(0,0,0,.6); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0B1826; --dot:#173350; --surface:#12263B; --ink:#E2F1FC; --muted:#93B1C8;
+  --line:#7FBFE6; --soft-line:#24476A; --shadow:#02080F;
+  --sky:#6CC3F2; --sky-deep:#8FD2F7; --sky-soft:#18385A;
+  --hrm:#1F6FA6; --hrd:#2A84B8; --quiz:#3896C8; --on-sky:#F2FAFF;
+  --trend:#123526; --trend-ink:#8FE0B4;
+  --ok:#5FD69A; --ok-soft:#12382A; --bad:#FF8A85; --bad-soft:#3D1C1F;
+  --scrim:rgba(0,0,0,.6); color-scheme:dark;}
+
+html,body{height:100%}
+/* keep Korean words whole when lines wrap; very long tokens (URLs) may still break */
+body{margin:0;word-break:keep-all;overflow-wrap:break-word}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 1.5px,transparent 1.7px);background-size:14px 14px;color:var(--ink);font-family:var(--font-ui);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.app{box-sizing:border-box;max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 24px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:center;gap:10px;height:64px;border-bottom:3px dashed var(--soft-line);margin-bottom:14px}
+.brand{font-family:var(--font-pixel);font-size:13px;line-height:1.4;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .kr{font-family:var(--font-ui);font-weight:700;font-size:18px;letter-spacing:-.01em;margin-left:5px}
+.brand .basket{width:24px;height:18px;image-rendering:pixelated;vertical-align:-1px;margin-left:8px}
+.deco{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.deco img{position:absolute;image-rendering:pixelated;image-rendering:crisp-edges}
+.app{position:relative;z-index:1}
+.brand small{font-family:var(--font-ui);font-weight:600;color:var(--muted);font-size:13px;margin-left:8px}
+
+/* pixel box: hard outline + offset shadow, pressed state shifts into the shadow */
+.px,.iconbtn,.big,.cat,.card,.pager,.opt,.pxbtn,.bubble,.sbar,.hit,.score{border:3px solid var(--line);border-radius:0;box-shadow:4px 4px 0 var(--shadow)}
+.iconbtn{appearance:none;background:var(--surface);color:var(--ink);height:40px;min-width:40px;padding:0 9px;font:12px/1 var(--font-pixel);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.iconbtn svg{width:18px;height:18px}
+.iconbtn[aria-pressed="true"]{background:var(--sky);color:var(--on-sky)}
+.iconbtn:active,.big:active,.cat:active,.opt:active,.pxbtn:active,.hit:active,.pbtn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--shadow)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px dashed var(--sky-deep);outline-offset:3px}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* Home */
+.home{flex:1;display:grid;grid-auto-rows:1fr;gap:18px;padding:0 4px 4px 0} /* fills what's left of the screen, no more */
+.big{appearance:none;cursor:pointer;text-align:left;padding:18px 16px 18px 20px;display:flex;align-items:center;gap:12px;color:var(--on-sky);min-height:150px;font:inherit}
+.big.hrm{background:var(--hrm)} .big.hrd{background:var(--hrd)} .big.quiz{background:var(--quiz)}
+.big .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.big .code{font-family:var(--font-pixel);font-size:clamp(24px,7.5vw,34px);line-height:1}
+.big .name{font-weight:700;font-size:16px;line-height:1.35}
+.big .subs{font-size:13px;line-height:1.5;opacity:.85}
+.sprite{flex:none;width:96px;height:96px;image-rendering:pixelated;image-rendering:crisp-edges}
+@media (prefers-reduced-motion:no-preference){
+  .big .sprite{animation:bob 1.1s steps(2,jump-none) infinite}
+  .big.hrd .sprite{animation-delay:.35s} .big.quiz .sprite{animation-delay:.7s}
+}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+
+/* Category list */
+.intro{padding:0 2px 14px}
+.intro h1{font-size:24px;line-height:1.25;margin:0 0 2px;text-wrap:balance}
+.intro p{margin:0;color:var(--muted);font-size:14.5px}
+.list{display:flex;flex-direction:column;gap:11px;padding-right:4px}
+.cat{appearance:none;width:100%;text-align:left;background:var(--surface);color:var(--ink);padding:10px 14px 10px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;font:inherit}
+.cat:hover{background:var(--sky-soft)}
+.cat .num{flex:none;width:36px;height:36px;border:2px solid var(--line);background:var(--sky-soft);color:var(--sky-deep);display:grid;place-items:center;font:12px/1 var(--font-pixel)}
+.cat .txt{flex:1;min-width:0}
+.cat .t{font-weight:700;font-size:16px;display:block}
+.cat .s{color:var(--muted);font-size:13px;display:block}
+.cat.tr .num{background:var(--trend);color:var(--trend-ink)}
+.kinds{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-right:4px;margin-block:auto;padding-bottom:40px;position:relative;top:-28px} /* centered under the heading, then lifted exactly 2 background dots (14px grid) */
+.kind{appearance:none;cursor:pointer;text-align:left;font:inherit;color:var(--ink);min-height:180px;padding:16px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border:3px solid var(--line);border-radius:0;box-shadow:4px 4px 0 var(--shadow)}
+.kind:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--shadow)}
+.kind.term{background:var(--sky-soft)} .kind.trend{background:var(--trend)}
+.kind svg{width:30px;height:auto;margin-bottom:auto}
+.kind.term svg,.kind.term .kc{color:var(--sky-deep)} .kind.trend svg,.kind.trend .kc{color:var(--trend-ink)}
+.kind .kt{font-weight:700;font-size:22px;line-height:1.3}
+.kind .ks{font-size:13px;color:var(--muted);line-height:1.45}
+.kind .kc{font-size:12.5px;font-weight:700;margin-top:6px}
+.cat .cnt{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* Detail */
+.crumb{color:var(--muted);font-size:13px;margin:0 2px 10px;display:flex;gap:6px;flex-wrap:wrap}
+.crumb b{color:var(--sky-deep);font-weight:700}
+.card{background:var(--surface);padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;margin-right:4px}
+.card.dcard{flex:1 0 auto;min-height:200px} /* grows to fill the screen, never past it unless the text is long */
+.chip{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border:2px solid currentColor;background:var(--sky-soft);color:var(--sky-deep)}
+.chip.trend{background:var(--trend);color:var(--trend-ink)}
+.card h2{margin:0;font-size:23px;line-height:1.3;text-wrap:balance}
+.card .alt{margin:-6px 0 0;color:var(--muted);font-size:14px}
+.card .body{margin:0;font-size:15.5px;line-height:1.6;max-width:65ch}
+.card .ex{margin:0;padding:12px 14px;border:2px dashed var(--soft-line);background:var(--bg);font-size:14.5px}
+.card .ex b{color:var(--sky-deep);font-weight:700;margin-right:6px}
+.card .asof{margin-top:auto;color:var(--muted);font-size:12.5px}
+.chiprow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.fav{appearance:none;border:0;background:none;padding:2px;margin:-8px -8px 0 0;cursor:pointer;line-height:0;flex:none}
+.fav svg{display:block;width:26px;height:30px}
+.fav:active{transform:scale(.9)}
+.favempty{display:flex;gap:12px;align-items:center}
+.favempty svg{flex:none}
+.favlist{margin-top:10px}
+.card .src{color:var(--sky-deep);text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
+.dots{display:flex;gap:5px;flex-wrap:wrap;margin:14px 2px 0;align-items:center}
+.dot{width:8px;height:8px;background:var(--soft-line)}
+.dot.on{background:var(--sky-deep);width:20px}
+.dot.tr{box-shadow:inset 0 0 0 2px var(--trend-ink);background:transparent}
+.dot.tr.on{background:var(--trend-ink)}
+.pager{position:fixed;z-index:6;right:max(20px,calc((100vw - 480px)/2 + 20px));bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:8px;background:var(--surface);padding:6px}
+.pager .pos{font:11px/1 var(--font-pixel);color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px;text-align:center}
+.pbtn{appearance:none;border:2px solid var(--line);width:44px;height:44px;background:var(--sky);color:var(--on-sky);cursor:pointer;display:grid;place-items:center}
+.pbtn:disabled{background:var(--sky-soft);color:var(--muted);cursor:default;transform:none}
+.pbtn svg{width:14px;height:20px}
+.spacer{flex:none;height:68px} /* room for the floating < > pager */
+
+/* Search */
+.search{position:fixed;inset:0;z-index:20}
+.scrim{position:absolute;inset:0;background:var(--scrim)}
+.spanel{position:relative;max-width:480px;margin:0 auto;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px;max-height:100%;box-sizing:border-box}
+.sbar{display:flex;align-items:center;gap:10px;background:var(--surface);padding:6px 6px 6px 12px;color:var(--ink)}
+.sbar>svg{width:18px;height:18px;flex:none;color:var(--sky-deep)}
+.sbar input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:600 17px var(--font-ui);height:40px;outline:none}
+.sbar input::-webkit-search-cancel-button{display:none}
+.results{overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:0 4px calc(24px + env(safe-area-inset-bottom,0px)) 0;max-height:calc(100vh - 110px)}
+.hint{margin:0;padding:12px 14px;background:var(--surface);border:3px solid var(--line);color:var(--muted);font-size:14px}
+.hit{appearance:none;text-align:left;background:var(--surface);color:var(--ink);padding:12px 14px;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:2px}
+.hit:hover{background:var(--sky-soft)}
+.hit .path{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.hit .path .k{font-size:11px;font-weight:700;padding:0 6px;border:2px solid currentColor;color:var(--sky-deep)}
+.hit .path .k.trend{color:var(--trend-ink)}
+.hit .ht{font-weight:700;font-size:16px}
+.hit .ha{font-size:13px;color:var(--muted)}
+.hit .hs{font-size:13.5px;color:var(--ink);opacity:.85}
+mark{background:var(--sky);color:var(--on-sky);padding:0 2px}
+
+/* Quiz */
+[hidden]{display:none!important}
+.quizview{display:flex;flex-direction:column;gap:16px;padding-right:4px}
+.teacher{display:flex;align-items:flex-end;gap:10px}
+.teacher .sprite{width:80px;height:80px}
+.bubble{position:relative;flex:1;min-width:0;background:var(--surface);padding:10px 14px;font-size:14.5px;font-weight:600;margin-bottom:22px}
+.bubble::before{content:"";position:absolute;left:-12px;bottom:10px;width:9px;height:9px;background:var(--surface);border-left:3px solid var(--line);border-bottom:3px solid var(--line)}
+.qprog{display:flex;gap:6px;align-items:center}
+.qprog span{width:22px;height:12px;border:2px solid var(--line);background:var(--surface)}
+.qprog span.cur{background:var(--sky)}
+.qprog span.ok{background:var(--ok)} .qprog span.bad{background:var(--bad)}
+.qprog .qpos{width:auto;height:auto;border:0;background:none;margin-left:auto;font:11px/1 var(--font-pixel);color:var(--muted)}
+.qcard{min-height:0}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{appearance:none;text-align:left;background:var(--surface);color:var(--ink);padding:12px 14px;cursor:pointer;font:600 16px var(--font-ui);display:flex;align-items:center;gap:12px}
+.opt:hover:not(:disabled){background:var(--sky-soft)}
+.opt .key{flex:none;width:28px;height:28px;border:2px solid var(--line);display:grid;place-items:center;font:11px/1 var(--font-pixel)}
+.opt:disabled{cursor:default;transform:none}
+.opt.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ink)} .opt.ok .key{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.bad{background:var(--bad-soft);border-color:var(--bad)} .opt.bad .key{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.opt.dim{opacity:.55}
+.qnav{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.pxbtn{appearance:none;background:var(--sky);color:var(--on-sky);padding:10px 16px;font:700 15px var(--font-ui);cursor:pointer}
+.pxbtn.ghost{background:var(--surface);color:var(--ink)}
+.score{background:var(--surface);padding:20px;text-align:center}
+.score b{font:44px/1.1 var(--font-pixel);color:var(--sky-deep)}
+.score span{font:18px var(--font-pixel);color:var(--muted)}
+.score p{margin:10px 0 0;color:var(--muted);font-size:14px}
+.qsub{margin:6px 0 -4px;font-weight:700;font-size:15px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:no-preference){.card,.quizview{animation:pop .18s steps(3,end)}}
+@keyframes pop{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div class="deco" id="deco" aria-hidden="true" hidden></div>
+<div class="app">
+  <header>
+    <button class="iconbtn" id="back" aria-label="뒤로" hidden></button>
+    <div class="brand" id="brand">HR<span class="kr">꾸러미</span></div>
+    <button class="iconbtn" id="favbtn" aria-label="즐겨찾기" title="즐겨찾기"></button>
+    <button class="iconbtn" id="find" aria-label="용어 찾기" title="용어 찾기 (Ctrl+F)"></button>
+    <button class="iconbtn" id="lang" aria-pressed="false" title="English / 한국어">Aa</button>
+  </header>
+  <main id="view"></main>
+</div>
+
+<div class="search" id="search" hidden>
+  <div class="scrim" id="scrim"></div>
+  <div class="spanel">
+    <div class="sbar"><span id="sicon"></span><input id="q" type="search" autocomplete="off" enterkeyhint="go" aria-label="검색"><button class="iconbtn" id="sclose" aria-label="닫기">X</button></div>
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<script>
+/* ---------- Content ----------
+   Each item: k = "term" | "trend", t = [ko, en] title, b = [ko, en] body, x = [ko, en] example (optional) */
+let AS_OF = ["2026년 11월 기준", "As of Nov 2026"];
+const HRWIKI = {name:"H.place HR 위키 · 채용담당자 용어 사전", url:"https://contents.h.place/hlab/article/insight/hrwiki4recruiter"};
+const DATA = {
+ hrm:{
+  name:["인사관리","Human Resource Management"],
+  cats:[
+   {id:"plan", t:["인사 기획","HR Planning"], items:[
+    {k:"term",t:["인력계획","Workforce Planning"],b:["회사의 사업 목표를 이루기 위해 언제, 어느 부서에, 어떤 역량을 가진 사람이 몇 명 필요한지 미리 예측하고 준비하는 일입니다. 수요(필요 인원)와 공급(현재 인원, 퇴사 예상)을 비교해 차이를 메울 방법을 정합니다.","Forecasting how many people, with which skills, the company needs in each team and when, so it can reach its business goals. You compare demand (people needed) with supply (current staff, expected leavers) and plan how to close the gap."],x:["예","내년 신사업 때문에 데이터 분석가 5명이 더 필요 → 채용 3명 + 내부 전환 2명으로 계획","Example","New business next year needs 5 more data analysts → hire 3, move 2 internally"]},
+    {k:"term",t:["직무분석","Job Analysis"],b:["각 직무가 하는 일, 필요한 지식·기술·태도, 책임 범위를 체계적으로 정리하는 작업입니다. 결과물로 직무기술서(하는 일)와 직무명세서(필요한 사람의 조건)가 나오며, 채용·평가·보상의 기초 자료가 됩니다.","Systematically recording what a job does, the knowledge, skills and attitudes it needs, and its responsibilities. It produces a job description (the tasks) and a job specification (the person needed), which feed hiring, appraisal and pay."]},
+    {k:"term",t:["직급·직책 체계","Grade & Position Structure"],b:["직급은 사람의 경력 단계(사원, 대리, 과장 등), 직책은 맡은 역할(팀장, 본부장 등)을 뜻합니다. 최근에는 직급 단계를 줄이고 '프로', '매니저'처럼 호칭을 통일하는 회사가 늘었습니다.","A grade is a person's career level (e.g., staff, assistant manager, manager); a position is the role they hold (team leader, division head). Many Korean companies now reduce the number of grades and use one common title such as 'Pro' or 'Manager'."]},
+    {k:"term",t:["인건비 계획","Labor Cost Planning"],b:["한 해 동안 쓸 급여, 상여, 4대보험, 복리후생 비용을 예산으로 미리 정하는 것입니다. 매출 대비 인건비 비율, 1인당 인건비 같은 지표로 적정 수준인지 확인합니다.","Setting the year's budget for salaries, bonuses, social insurance and benefits in advance. Ratios such as labor cost to revenue and cost per employee show whether the level is reasonable."]},
+    {k:"term",t:["HR 애널리틱스","People Analytics"],b:["퇴사율, 채용 소요 기간, 성과와 교육의 관계처럼 인사 데이터를 분석해 근거 있는 의사결정을 돕는 일입니다. 감이 아니라 숫자로 문제를 찾는 것이 핵심입니다.","Analyzing HR data such as turnover, time-to-hire, or the link between training and performance to support evidence-based decisions. The point is finding problems with numbers, not gut feeling."]},
+    {k:"term",t:["리텐션","Retention"],b:["필요한 인재, 특히 핵심 인재가 회사를 떠나지 않고 계속 일하도록 붙잡는 모든 활동입니다. 보상뿐 아니라 성장 기회, 좋은 리더, 일하는 방식이 리텐션에 큰 영향을 줍니다.","Everything a company does to keep the people it needs, especially key talent, from leaving. Pay matters, but growth chances, good managers and how people work also have a big effect."],x:["예","퇴사 면담(Exit Interview)과 재직자 면담(Stay Interview)으로 떠나는 이유와 남는 이유를 함께 확인","Example","Use exit interviews and stay interviews to learn why people leave and why they stay"]},
+    {k:"term",t:["이직률","Turnover Rate"],b:["일정 기간 동안 회사를 떠난 사람의 비율입니다. 보통 '퇴사자 수 ÷ 평균 재직자 수 × 100'으로 계산하며, 본인이 원해서 나간 자발적 이직과 회사 결정에 의한 비자발적 이직을 나눠 봅니다.","The share of people who left during a period, usually calculated as leavers ÷ average headcount × 100. It is split into voluntary turnover (the person chose to leave) and involuntary turnover (the company decided)."]},
+    {k:"term",t:["TO · 헤드카운트","Headcount (HC) & Open Positions"],b:["헤드카운트(HC)는 실제 재직 인원 수, TO는 조직에 정해진 정원(자리)을 뜻하는 말로 현업에서 자주 씁니다. 'TO가 났다'는 채용할 수 있는 빈자리가 생겼다는 뜻입니다.","Headcount (HC) is the number of people actually employed. In Korean workplaces, 'TO' (from Table of Organization) means the approved number of positions; 'a TO opened' means there is a seat you can hire for."]},
+    {k:"trend",t:["AI와 함께 일하는 조직 설계","Designing Work Around AI"],b:["생성형 AI가 업무 일부를 대신하면서, 인력계획이 '사람 수'보다 '어떤 일을 사람이, 어떤 일을 AI가 할지'를 나누는 방향으로 바뀌고 있습니다. 직무를 업무(task) 단위로 쪼개 다시 설계하는 회사가 늘고 있습니다.","As generative AI takes over parts of jobs, workforce planning is shifting from headcount to deciding which tasks people do and which AI does. More companies are breaking jobs into tasks and redesigning them."]},
+    {k:"trend",t:["스킬 기반 조직","Skills-Based Organization"],b:["직무나 학력 대신 '보유 스킬'을 기준으로 사람을 배치·채용·육성하는 방식입니다. 사내 스킬 데이터베이스를 만들어 프로젝트에 맞는 사람을 빠르게 찾는 데 활용합니다.","Placing, hiring and developing people based on the skills they have, rather than job titles or degrees. Companies build internal skills databases to quickly find the right person for a project."]}
+   ]},
+   {id:"recruit", t:["채용","Recruiting"], items:[
+    {k:"term",t:["채용 브랜딩","Employer Branding"],b:["'일하고 싶은 회사'라는 이미지를 지원자에게 전달하는 활동입니다. 회사의 일하는 방식, 성장 기회, 문화를 블로그·SNS·채용 페이지로 알립니다.","Activities that show candidates why the company is a great place to work, sharing how people work, grow and what the culture is like through blogs, social media and career pages."]},
+    {k:"term",t:["구조화 면접","Structured Interview"],b:["모든 지원자에게 같은 질문을 같은 순서로 묻고, 미리 정한 기준으로 점수를 매기는 면접입니다. 면접관의 주관을 줄여 공정성과 예측력을 높입니다.","An interview where every candidate gets the same questions in the same order and is scored against criteria set in advance. It reduces interviewer bias and better predicts job performance."],x:["예","행동 질문: \"갈등을 해결했던 경험을 구체적으로 말해 주세요.\"","Example","Behavioral question: \"Tell me about a time you resolved a conflict.\""]},
+    {k:"term",t:["컬처핏","Culture Fit / Culture Add"],b:["지원자가 회사의 가치관, 일하는 방식과 잘 맞는지 보는 기준입니다. 비슷한 사람만 뽑는 문제를 막기 위해 최근에는 '새로운 관점을 더해 줄 사람'을 보는 컬처애드(Culture Add)도 함께 이야기합니다.","Whether a candidate matches the company's values and ways of working. To avoid hiring only similar people, many now also look for 'culture add' — someone who brings a new perspective."]},
+    {k:"term",t:["리퍼럴 채용","Employee Referral"],b:["현직 직원이 아는 사람을 추천해 채용하는 방식입니다. 적합한 인재를 빠르게 찾을 수 있어 추천한 직원에게 보상금을 주는 경우가 많습니다.","Hiring people recommended by current employees. It finds good-fit candidates quickly, so companies often pay the referring employee a bonus."]},
+    {k:"term",t:["온보딩","Onboarding"],b:["새로 입사한 사람이 회사와 업무에 빨리 적응하도록 돕는 과정입니다. 보통 입사 첫날부터 90일까지를 계획하며, 버디(멘토) 지정, 업무 목표 설정 등이 포함됩니다.","Helping new hires settle into the company and their work quickly. It usually covers day one to day 90 and includes assigning a buddy and setting early goals."]},
+    {k:"term",t:["채용 퍼널 지표","Recruiting Funnel Metrics"],b:["지원 → 서류 통과 → 면접 → 합격 → 입사로 이어지는 단계별 숫자입니다. 채용 소요 기간(Time to Hire), 1인당 채용 비용(Cost per Hire), 합격자 입사 수락률(Offer Acceptance Rate)을 자주 봅니다.","Numbers at each stage: applied → screened → interviewed → offered → hired. Common metrics are Time to Hire, Cost per Hire and Offer Acceptance Rate."]},
+    {k:"term",t:["소싱","Sourcing"],b:["채용 공고를 기다리지 않고, 맞는 인재를 직접 찾아내 연락하는 활동입니다. 지금 이직을 생각하지 않는 '잠재 후보자(패시브 후보자)'까지 찾아 관계를 만드는 것이 핵심이며, 이 일을 전문으로 하는 사람을 소서(Sourcer)라고 합니다.","Actively finding and reaching out to suitable people instead of waiting for applicants. The key is reaching passive candidates — people not looking for a job right now — and building relationships. A person who does this full-time is called a sourcer."],x:["예","경력 플랫폼에서 '데이터 분석 · 5년 이상' 조건으로 후보자를 찾아 커피챗 제안 메시지 보내기","Example","Search a career platform for 'data analysis, 5+ years' and send a coffee-chat message"]},
+    {k:"term",t:["ATS","Applicant Tracking System"],b:["지원서 접수부터 서류 평가, 면접 일정, 합격 통보까지 채용 과정을 한곳에서 관리하는 시스템입니다. 지원자 이력과 평가 기록이 쌓여 채용 지표를 보기도 쉬워집니다.","Software that manages hiring in one place, from receiving applications to screening, interview scheduling and offers. It keeps candidate history and feedback, which also makes recruiting metrics easy to track."]},
+    {k:"term",t:["평판 조회 · 레퍼런스 체크","Reference Check"],b:["최종 합격 전에 지원자와 함께 일했던 사람에게 업무 방식과 성과를 확인하는 절차입니다. 개인정보이므로 반드시 지원자의 동의를 받고 진행해야 합니다.","Before the final offer, asking people who worked with the candidate about their work style and results. Because it involves personal information, you must get the candidate's consent first."]},
+    {k:"term",t:["다이렉트 소싱","Direct Sourcing"],b:["헤드헌터나 채용 대행사를 거치지 않고, 회사의 채용 담당자가 후보자를 직접 찾아 연락하는 방식입니다. 수수료를 아끼고 회사의 이야기를 직접 전할 수 있지만, 담당자의 시간과 노력이 많이 듭니다.","The company's own recruiters find and contact candidates directly, without agencies or headhunters. It saves fees and lets the company tell its own story, but takes a lot of recruiter time and effort."],src:HRWIKI},
+    {k:"term",t:["헤드헌팅","Headhunting / Executive Search"],b:["임원이나 고급 전문가처럼 찾기 어려운 인재를 외부 전문 헤드헌터에게 맡겨 찾는 방식입니다. 보통 채용이 성공하면 합격자 연봉의 일정 비율을 수수료로 냅니다.","Using an outside headhunter to find hard-to-find people such as executives or senior experts. The fee is usually a percentage of the hired person's annual salary, paid when the hire succeeds."],src:HRWIKI},
+    {k:"term",t:["JD (직무기술서)","Job Description (JD)"],b:["채용 공고에 들어가는 문서로, 이 자리가 하는 일, 책임, 필요한 역량과 자격 요건을 정리합니다. JD가 명확해야 맞는 사람이 지원하고 면접 평가 기준도 분명해집니다.","The document behind a job posting that lists the role's tasks, responsibilities, required skills and qualifications. A clear JD attracts the right applicants and makes interview criteria clear."],x:["예","[하는 일] 채용 운영 · 면접 일정 관리 / [자격 요건] 채용 실무 2년 이상 / [우대 사항] ATS 사용 경험","Example","[Duties] Run hiring, schedule interviews / [Requirements] 2+ years in recruiting / [Preferred] ATS experience"],src:HRWIKI},
+    {k:"term",t:["Time to Fill · Time to Hire","Time to Fill vs Time to Hire"],b:["Time to Fill은 자리가 빈 날(또는 채용 요청일)부터 새 사람이 입사하기까지 걸린 기간입니다. Time to Hire는 특정 후보자를 처음 만난 날부터 그 사람이 합격을 수락하기까지의 기간으로, 채용 과정 자체가 얼마나 빠른지 보여 줍니다.","Time to Fill runs from when a job opens (or is requested) until the new person starts. Time to Hire runs from first contact with a candidate until they accept the offer, showing how fast the hiring process itself is."],src:HRWIKI},
+    {k:"term",t:["백그라운드 체크","Background Check"],b:["경력, 학력, 자격증 등 지원자가 제출한 정보가 사실인지 확인하는 절차입니다. 평판 조회가 '어떤 사람인지'를 본다면, 백그라운드 체크는 '적힌 내용이 맞는지'를 봅니다. 한국에서는 범죄 기록 등 민감한 정보는 법으로 엄격히 제한되므로 반드시 지원자 동의와 법적 범위를 확인해야 합니다.","Verifying that a candidate's stated career, education and licenses are true. A reference check asks what the person is like; a background check asks whether the facts are right. In Korea, sensitive data like criminal records is strictly limited by law, so consent and legal limits must be checked."],src:HRWIKI},
+    {k:"term",t:["행동 면접 · STAR 기법","Behavioral Interview & STAR"],b:["\"~했던 경험을 말해 주세요\"처럼 과거 행동을 물어 앞으로의 행동을 예측하는 면접입니다. 답변을 상황(Situation) · 과제(Task) · 행동(Action) · 결과(Result) 순서로 확인하는 것을 STAR 기법이라고 합니다. 참고로 '이런 상황이면 어떻게 하겠어요?'처럼 가정을 묻는 것은 상황 면접이라고 부릅니다.","An interview that asks about past behavior ('Tell me about a time when…') to predict future behavior. Checking the answer in Situation, Task, Action, Result order is the STAR method. Asking hypothetical questions ('What would you do if…') is called a situational interview."],src:HRWIKI},
+    {k:"term",t:["인재풀","Talent Pool"],b:["지금 당장 뽑지 않더라도 앞으로 필요할 수 있는 후보자들을 미리 모아 관리하는 명단입니다. 사내 직원으로 이루어진 내부 인재풀과, 과거 지원자 · 추천 후보 등 외부 인재풀로 나뉩니다.","A managed list of people who may be needed in the future, even if you are not hiring now. It includes an internal pool (current employees) and an external pool (past applicants, referred candidates, etc.)."],src:HRWIKI},
+    {k:"term",t:["TRM","Talent Relationship Management"],b:["잠재 후보자와 오랫동안 관계를 쌓고 관리하는 채용 전략입니다. 고객 관계 관리(CRM)처럼 뉴스레터, 행사 초대, 정기 연락으로 관심을 이어 가다가 맞는 자리가 생기면 바로 연결합니다.","A recruiting strategy of building long-term relationships with potential candidates. Like customer relationship management (CRM), you keep in touch with newsletters, event invites and check-ins, then reach out when the right role opens."],src:HRWIKI},
+    {k:"term",t:["채용 파이프라인","Recruitment Pipeline"],b:["인재를 발굴하고, 거르고, 채용하기까지의 과정을 단계별로 체계화한 흐름입니다. 각 단계에 후보자가 꾸준히 채워져 있으면 자리가 비었을 때 빠르게 채용할 수 있습니다.","A structured, step-by-step flow for finding, screening and hiring talent. If each stage always has candidates in it, you can hire quickly when a role opens."],src:HRWIKI},
+    {k:"term",t:["직무 매칭","Job Matching"],b:["지원자의 역량, 경험, 성향을 분석해 가장 잘 맞는 직무에 연결하는 과정입니다. 최근에는 AI가 이력서와 JD를 비교해 적합도를 추천하는 경우가 많습니다.","Analyzing a candidate's skills, experience and traits to connect them to the best-fitting role. AI tools now often compare resumes with JDs and suggest a match score."],src:HRWIKI},
+    {k:"term",t:["후보자 경험","Candidate Experience"],b:["지원자가 공고를 보고, 지원하고, 면접 보고, 결과를 듣기까지 회사와 만나는 모든 순간의 경험입니다. 불합격자도 좋은 경험을 하면 회사 평판이 좋아지고, 나쁜 경험은 후기로 빠르게 퍼집니다.","Every moment a candidate has with the company — seeing the posting, applying, interviewing and hearing the result. A good experience, even for rejected candidates, helps the company's reputation; a bad one spreads quickly through reviews."],src:HRWIKI},
+    {k:"trend",t:["AI 채용 도구와 공정성","AI Hiring Tools & Fairness"],b:["서류 검토, 면접 일정 조율, 질문 생성에 AI를 쓰는 회사가 많아졌습니다. 동시에 AI가 특정 집단에 불리하게 판단하지 않는지 확인하고, 사람이 최종 결정을 하는 원칙이 중요해졌습니다.","Many companies now use AI to screen resumes, schedule interviews and draft questions. At the same time, checking that AI doesn't disadvantage certain groups, and keeping a human in the final decision, has become essential."]},
+    {k:"trend",t:["학력보다 스킬 중심 채용","Skills-Based Hiring"],b:["학위 조건을 없애고 실무 과제, 포트폴리오, 스킬 테스트로 역량을 확인하는 채용이 늘고 있습니다. 지원자 풀이 넓어지고 실제 업무 능력을 더 잘 볼 수 있다는 장점이 있습니다.","More employers drop degree requirements and check ability with work samples, portfolios and skills tests. It widens the candidate pool and better shows real job skills."]}
+   ]},
+   {id:"eval", t:["평가","Performance Management"], items:[
+    {k:"term",t:["KPI","Key Performance Indicator"],b:["목표를 얼마나 달성했는지 숫자로 보여 주는 핵심 성과 지표입니다. 측정 가능하고 기간이 정해진 지표여야 합니다.","A key number that shows how well a goal is being met. It should be measurable and tied to a time period."],x:["예","고객 문의 응답 시간 24시간 이내 비율 95% 달성","Example","Answer 95% of customer inquiries within 24 hours"]},
+    {k:"term",t:["OKR","Objectives and Key Results"],b:["도전적인 목표(Objective)와 그 달성을 확인할 2~4개의 핵심 결과(Key Results)로 구성된 목표 관리 방식입니다. 보통 분기마다 정하고, 70% 정도 달성해도 성공으로 봅니다.","A goal method with one ambitious Objective and 2–4 Key Results that measure it. Usually set quarterly; reaching about 70% is often seen as success."]},
+    {k:"term",t:["MBO","Management by Objectives"],b:["상사와 직원이 함께 목표를 정하고, 기간이 끝나면 달성도를 평가하는 전통적인 목표 관리 방식입니다. 많은 한국 기업 평가 제도의 기본 틀입니다.","A traditional method where a manager and employee agree on goals together and assess achievement at the end of the period. It is the base of many Korean companies' appraisal systems."]},
+    {k:"term",t:["상대평가 vs 절대평가","Forced Ranking vs Absolute Rating"],b:["상대평가는 S 10%, A 20%처럼 등급 비율을 정해 사람끼리 비교합니다. 절대평가는 정해진 기준 달성 여부로 평가해 비율 제한이 없습니다. 최근에는 절대평가로 바꾸는 회사가 늘었습니다.","Forced ranking sets fixed shares per grade (e.g., S 10%, A 20%) and compares people with each other. Absolute rating judges each person against set standards with no quota. More companies are moving to absolute rating."]},
+    {k:"term",t:["다면평가","360-Degree Feedback"],b:["상사뿐 아니라 동료, 부하 직원, 때로는 고객까지 여러 방향에서 의견을 받는 평가입니다. 리더십이나 협업 역량을 볼 때 많이 씁니다.","Feedback collected from many directions — manager, peers, direct reports and sometimes customers. Often used to assess leadership and collaboration."]},
+    {k:"term",t:["캘리브레이션","Calibration"],b:["평가자마다 기준이 달라지지 않도록, 평가자들이 모여 등급을 비교하고 조정하는 회의입니다. '후한 팀장', '깐깐한 팀장'의 차이를 줄입니다.","A meeting where raters compare and adjust ratings so standards stay consistent, reducing the gap between lenient and strict managers."]},
+    {k:"term",t:["평가 오류","Rating Errors"],b:["평가자가 흔히 빠지는 실수입니다. 한 가지 장점 때문에 전부 좋게 보는 후광효과, 모두에게 후하게 주는 관대화, 무난하게 가운데 점수만 주는 중심화, 최근 일만 기억하는 최근효과 등이 있습니다.","Common mistakes raters make: the halo effect (one strength colors everything), leniency (rating everyone high), central tendency (giving everyone middle scores) and recency bias (remembering only recent events)."]},
+    {k:"trend",t:["상시 성과관리와 1on1","Continuous Performance & 1-on-1s"],b:["연말 한 번 평가하는 대신, 상사와 직원이 정기적으로 1on1 미팅을 하며 수시로 피드백하는 방식이 자리 잡고 있습니다. 평가보다 '성장 대화'에 무게를 둡니다.","Instead of one year-end review, managers and employees hold regular 1-on-1s and give feedback often. The focus moves from rating to growth conversations."]},
+    {k:"trend",t:["AI가 돕는 평가","AI-Assisted Reviews"],b:["업무 기록을 바탕으로 AI가 평가 초안이나 피드백 문장을 만들어 주는 기능이 HR 시스템에 들어오고 있습니다. 편리하지만 최종 판단과 설명 책임은 평가자에게 있다는 점이 강조됩니다.","HR systems now include AI that drafts reviews or feedback from work records. It saves time, but the rater still owns the final judgment and must be able to explain it."]}
+   ]},
+   {id:"comp", t:["보상 및 복리후생","Compensation & Benefits"], items:[
+    {k:"term",t:["총보상","Total Rewards"],b:["급여만이 아니라 상여, 복리후생, 성장 기회, 근무 환경까지 직원이 회사에서 받는 모든 가치를 합친 개념입니다.","Everything of value an employee gets from work — not only pay but bonuses, benefits, growth opportunities and the working environment."]},
+    {k:"term",t:["기본급 · 통상임금 · 평균임금","Base Pay, Ordinary Wage, Average Wage"],b:["기본급은 정해진 기본 월급입니다. 통상임금은 정기적·일률적으로 주는 임금으로 연장근로수당 등을 계산하는 기준이고, 평균임금은 최근 3개월 받은 임금의 하루 평균으로 퇴직금 계산에 씁니다. 2024년 12월 대법원 판결로 '고정성' 요건이 빠져, 조건이 붙은 정기상여도 통상임금에 들어갈 수 있게 되었습니다.","Base pay is the fixed monthly salary. The ordinary wage is pay given regularly and uniformly and is the base for overtime pay. The average wage is the daily average of the last 3 months' pay, used for severance. A December 2024 Supreme Court ruling dropped the 'fixedness' test, so conditional regular bonuses can now count as ordinary wage."]},
+    {k:"term",t:["연봉 밴드","Pay Band"],b:["직급이나 직무별로 연봉의 최솟값~최댓값 범위를 정해 둔 것입니다. 밴드 안에서 위치를 보여 주는 지표로 컴파 레이시오(Compa-ratio, 실제 연봉 ÷ 밴드 중간값)를 씁니다.","A minimum–maximum salary range set for each grade or job. Compa-ratio (actual pay ÷ band midpoint) shows where a person sits in the band."]},
+    {k:"term",t:["인센티브","Incentive"],b:["성과에 따라 추가로 주는 보상입니다. 개인 성과급, 팀·조직 성과급, 이익을 나누는 PS(Profit Sharing), 목표 초과 달성 시 주는 PI(Productivity Incentive) 등이 있습니다.","Extra pay tied to performance: individual bonuses, team bonuses, Profit Sharing (PS), and Productivity Incentives (PI) paid when targets are beaten."]},
+    {k:"term",t:["주식 보상","Stock Compensation"],b:["회사 주식을 보상으로 주는 방식입니다. 정해진 가격에 살 권리를 주는 스톡옵션, 일정 기간 뒤 주식을 직접 주는 RSU(양도제한조건부주식) 등이 있습니다.","Paying people in company shares. Stock options give the right to buy at a set price; RSUs (Restricted Stock Units) grant shares after a vesting period."]},
+    {k:"term",t:["복리후생","Employee Benefits"],b:["법으로 정한 4대보험(국민연금·건강보험·고용보험·산재보험) 같은 법정 복리후생과, 회사가 자율로 주는 식대, 건강검진, 자기계발비 같은 법정 외 복리후생으로 나뉩니다. 정해진 포인트 안에서 직원이 고르는 방식은 선택적 복리후생(카페테리아 플랜)이라고 합니다.","Statutory benefits are required by law, like Korea's four social insurances (pension, health, employment, workplace injury). Voluntary benefits include meals, health checkups and learning allowances. Letting employees choose within a point budget is called a cafeteria plan."]},
+    {k:"term",t:["리텐션 보너스","Retention Bonus"],b:["핵심 인재가 일정 기간 회사에 남는 조건으로 주는 보상입니다. 인수합병, 큰 프로젝트, 경쟁사 스카우트 시도처럼 사람이 떠날 위험이 큰 시기에 주로 씁니다.","A bonus paid on the condition that a key person stays for a set period. It is often used when the risk of leaving is high, such as during a merger, a major project or a competitor's job offer."]},
+    {k:"term",t:["연봉 협상 · 처우 협의","Salary Negotiation & Offer"],b:["합격자에게 연봉, 입사일, 직급 등 근무 조건을 제안하고 조율하는 과정입니다. 제안 내용을 정리한 문서를 오퍼 레터(Offer Letter)라고 하며, 기존 연봉과 회사 연봉 밴드를 함께 고려합니다.","Proposing and agreeing on pay, start date, grade and other terms with a selected candidate. The written proposal is called an offer letter, and it considers both the candidate's current pay and the company's pay band."]},
+    {k:"trend",t:["임금 투명성","Pay Transparency"],b:["EU는 2026년 6월까지 회원국이 '임금 투명성 지침'을 법으로 만들도록 했습니다. 채용 공고에 연봉 범위를 밝히고, 남녀 임금 격차를 보고해야 합니다. 글로벌 기업을 중심으로 연봉 범위 공개가 확산되고 있습니다.","The EU required member states to adopt its Pay Transparency Directive by June 2026: job ads must show pay ranges and companies must report gender pay gaps. Publishing salary ranges is spreading, led by global companies."]},
+    {k:"trend",t:["맞춤형 · 웰빙 복지","Personalized & Wellbeing Benefits"],b:["모두에게 같은 복지를 주기보다 직원 상황에 맞춘 복지가 늘고 있습니다. 마음 건강(심리상담), 육아·난임 지원, 유연 근무가 중요한 복지로 꼽힙니다.","Instead of one-size-fits-all perks, benefits are becoming personal. Mental health support, childcare and fertility support, and flexible work are now seen as key benefits."]}
+   ]},
+   {id:"ops", t:["인사 운영 및 노무","HR Operations & Labor Relations"], items:[
+    {k:"term",t:["근로계약서","Employment Contract"],b:["임금, 근로시간, 휴일, 연차휴가, 근무 장소와 업무 등을 적어 회사와 근로자가 함께 서명하는 문서입니다. 근로기준법상 반드시 서면으로 작성해 1부를 근로자에게 줘야 합니다.","A signed document stating pay, working hours, days off, annual leave, workplace and duties. Korea's Labor Standards Act requires it in writing, with a copy given to the employee."]},
+    {k:"term",t:["취업규칙","Rules of Employment"],b:["근로시간, 임금, 휴가, 징계 등 회사의 근무 규칙을 정리한 문서입니다. 상시 10명 이상 사업장은 만들어 고용노동부에 신고해야 하며, 근로자에게 불리하게 바꿀 때는 근로자 과반수의 동의가 필요합니다.","The company's written work rules on hours, pay, leave, discipline and more. Workplaces with 10+ regular employees must file them with the Ministry of Employment and Labor; changes that disadvantage workers need majority employee consent."]},
+    {k:"term",t:["주 52시간제","52-Hour Workweek"],b:["법정 근로시간 주 40시간에 연장근로 최대 12시간을 더해 1주 최대 52시간까지 일할 수 있게 한 제도입니다. 탄력적·선택적 근로시간제로 기간 안에서 시간을 조정할 수 있습니다.","Korea's weekly cap: 40 standard hours plus up to 12 overtime hours. Flexible and selective working-hour systems let companies spread hours within a set period."]},
+    {k:"term",t:["연차휴가","Annual Paid Leave"],b:["1년간 80% 이상 출근하면 15일의 유급휴가가 생기고, 3년 이상 근속하면 2년마다 1일씩 늘어 최대 25일까지 됩니다. 입사 1년 미만은 한 달 개근 시 1일씩 생깁니다.","After working 80%+ of a year, an employee gets 15 paid days off, plus 1 day every 2 years after year 3, up to 25 days. In the first year, 1 day accrues for each full month worked."]},
+    {k:"term",t:["징계와 부당해고","Discipline & Unfair Dismissal"],b:["회사는 정당한 이유 없이 해고·정직 등 징계를 할 수 없습니다. 해고하려면 최소 30일 전에 알리거나 30일분 통상임금을 줘야 하고, 해고 사유와 시기를 서면으로 알려야 합니다. 부당하다고 생각하면 3개월 안에 노동위원회에 구제 신청을 할 수 있습니다.","An employer cannot dismiss or suspend without just cause. Dismissal needs at least 30 days' notice (or 30 days' ordinary wage) and written notice of the reason and date. A worker can apply to the Labor Relations Commission within 3 months."]},
+    {k:"term",t:["노사협의회 · 단체교섭","Labor-Management Council & Collective Bargaining"],b:["노사협의회는 상시 30명 이상 사업장에 두어야 하는 노사 대화 기구로, 3개월마다 회의를 엽니다. 단체교섭은 노동조합과 회사가 임금·근로조건을 협상하는 과정이며, 결과는 단체협약으로 정리됩니다.","A labor-management council is required at workplaces with 30+ regular employees and meets every 3 months. Collective bargaining is when a union and the company negotiate pay and conditions; the result is a collective agreement."]},
+    {k:"term",t:["수습 기간","Probation Period"],b:["입사 후 업무 적응과 적격성을 확인하는 기간으로 보통 3개월입니다. 1년 이상 계약한 경우 수습 3개월 동안은 최저임금의 90%까지 줄 수 있지만, 단순 노무 직종은 예외입니다. 수습 중이라도 해고하려면 정당한 이유가 필요합니다.","A period, usually 3 months, to check a new hire's fit for the job. For contracts of 1 year or more, pay during the first 3 months can be as low as 90% of the minimum wage, except for simple manual jobs. Even during probation, dismissal needs a valid reason."]},
+    {k:"term",t:["육아휴직","Parental Leave"],b:["자녀가 만 8세 이하(초등학교 2학년 이하)일 때 쓸 수 있는 휴직입니다. 2025년부터 부모 각각 1년씩 쓸 수 있고, 부모 모두 3개월 이상 쓰면 각각 1년 6개월까지 늘어납니다. 휴직 중에는 고용보험에서 육아휴직 급여가 나옵니다.","Leave available while a child is 8 or younger (up to 2nd grade). From 2025, each parent can take 1 year, extended to 1.5 years each if both parents take at least 3 months. Employment insurance pays a parental leave benefit during the leave."]},
+    {k:"term",t:["오프보딩","Offboarding"],b:["직원이 회사를 떠날 때 거치는 퇴사 과정 전체입니다. 업무 인수인계, 장비와 계정 회수, 퇴직금 · 4대보험 정리, 퇴사 면담이 포함됩니다. 잘 마무리하면 회사 평판을 지키고, 나중에 다시 돌아오는 '부메랑 직원'으로 이어지기도 합니다.","The whole process when an employee leaves: handing over work, collecting equipment and accounts, settling severance and social insurance, and an exit interview. Done well, it protects the company's reputation and can even lead to 'boomerang employees' who return later."],x:["체크리스트","인수인계서 작성 → 계정 · 보안 권한 회수 → 퇴직금 지급(퇴사 후 14일 이내) → 4대보험 상실 신고 → 퇴사 면담","Checklist","Handover document → remove accounts and access → pay severance (within 14 days) → report loss of social insurance → exit interview"]},
+    {k:"term",t:["포괄임금제","Comprehensive (All-Inclusive) Wage System"],b:["연장 · 야간 · 휴일 근로수당을 실제 일한 시간과 상관없이 미리 정한 금액으로 월급에 포함해 주는 방식입니다. 법에 직접 정해진 제도가 아니라 판례로 인정되어 왔고, 대법원은 근로시간을 계산하기 어려운 경우에만 유효하다고 봅니다. 정해진 시간보다 더 일하면 차액을 따로 줘야 하며, 장시간 근로의 원인으로 지적되어 법으로 금지하려는 논의가 이어지고 있습니다.","A pay method where overtime, night and holiday pay are included in the monthly salary as a fixed amount, regardless of actual hours. It is not written in the law but has been accepted by court rulings, and the Supreme Court sees it as valid only when working hours are hard to measure. If someone works more than the hours covered, the difference must be paid, and because it is blamed for long working hours, there is ongoing debate about banning it by law."],x:["예","월급 400만 원에 '고정 연장근로수당 월 20시간분' 포함 → 실제 연장근로가 30시간이면 10시간분을 추가 지급","Example","₩4M monthly pay includes 'fixed overtime for 20 hours' → if actual overtime is 30 hours, pay 10 more hours"]},
+    {k:"trend",t:["노동조합법 개정(노란봉투법)","Trade Union Act Amendment ('Yellow Envelope Act')"],b:["2025년 8월 국회를 통과해 2026년 3월부터 시행된 개정 노조법은 하청 노동자에 대한 원청의 사용자 책임을 넓히고, 파업에 대한 손해배상 청구를 제한합니다. 원청 기업의 교섭 대응 준비가 중요한 과제가 되었습니다.","Passed in August 2025 and in force from March 2026, the amended Trade Union Act widens a prime contractor's employer responsibility toward subcontracted workers and limits damage claims against strikes. Preparing for bargaining has become a key task for prime contractors."]},
+    {k:"trend",t:["근로시간 단축과 정년 연장 논의","Shorter Hours & Retirement Age Debate"],b:["정부와 노사 사이에서 주 4.5일제 등 실근로시간 단축과, 현재 60세인 법정 정년을 65세로 단계적으로 늘리는 방안이 논의되고 있습니다. 확정 내용은 법 개정 소식을 꼭 확인하세요.","The government, unions and employers are discussing cutting actual working hours (e.g., a 4.5-day week) and gradually raising the legal retirement age from 60 to 65. Check official law changes for what is final."]}
+   ]}
+  ]
+ },
+ hrd:{
+  name:["인적자원개발","Human Resource Development"],
+  cats:[
+   {id:"talent", t:["인재 육성","Talent Development"], items:[
+    {k:"term",t:["역량 모델","Competency Model"],b:["직무에서 높은 성과를 내는 사람이 공통으로 보이는 지식, 기술, 행동 특성을 정리한 틀입니다. 공통 역량, 리더십 역량, 직무 역량으로 나누는 경우가 많습니다.","A framework of the knowledge, skills and behaviors shared by high performers. It is often split into core, leadership and job-specific competencies."]},
+    {k:"term",t:["IDP","Individual Development Plan"],b:["직원이 상사와 함께 세우는 개인별 성장 계획입니다. 키우고 싶은 역량, 방법(교육, 프로젝트, 멘토링), 기한을 적습니다.","A personal growth plan an employee makes with their manager, listing skills to build, how (training, projects, mentoring) and by when."]},
+    {k:"term",t:["70:20:10 모델","70-20-10 Model"],b:["사람은 70%를 업무 경험에서, 20%를 다른 사람(피드백·코칭)에게서, 10%를 공식 교육에서 배운다는 학습 비율 모델입니다. 교육만으로는 부족하다는 점을 알려 줍니다.","A model saying people learn about 70% from on-the-job experience, 20% from others (feedback, coaching) and 10% from formal training — a reminder that classes alone are not enough."]},
+    {k:"term",t:["핵심인재 · 승계계획","High Potentials & Succession Planning"],b:["핵심인재(HiPo)는 앞으로 더 큰 역할을 맡을 잠재력이 높은 사람입니다. 승계계획은 주요 자리가 비었을 때 바로 맡을 후보를 미리 정하고 키우는 일입니다.","High potentials (HiPos) are people likely to grow into bigger roles. Succession planning names and develops ready candidates for key positions before they open up."]},
+    {k:"term",t:["코칭 · 멘토링","Coaching & Mentoring"],b:["코칭은 질문을 통해 스스로 답을 찾도록 돕는 것이고, 멘토링은 경험 많은 선배가 조언과 노하우를 나누는 것입니다. 후배가 선배에게 디지털 트렌드를 알려 주는 역멘토링도 있습니다.","Coaching helps people find their own answers through questions; mentoring is an experienced person sharing advice. In reverse mentoring, junior staff teach seniors, often about digital trends."]},
+    {k:"term",t:["리더십 파이프라인","Leadership Pipeline"],b:["실무자 → 팀장 → 여러 팀을 맡는 리더 → 사업 책임자로 올라가며 단계마다 필요한 역할과 역량이 달라진다는 모델입니다. 단계를 옮길 때 '무엇을 내려놓고 무엇을 새로 배워야 하는지'를 준비시키는 데 씁니다.","A model showing that roles and skills change at each step: individual contributor → team leader → leader of leaders → business head. It helps people prepare for what to let go of and what to learn at each transition."]},
+    {k:"trend",t:["리스킬링 · 업스킬링","Reskilling & Upskilling"],b:["AI로 일이 바뀌면서 새 직무로 옮기기 위한 리스킬링, 지금 직무를 더 잘하기 위한 업스킬링이 핵심 과제가 되었습니다. 특히 전 직원 대상 AI 활용 교육이 빠르게 늘고 있습니다.","As AI changes work, reskilling (learning for a new role) and upskilling (getting better at the current role) are top priorities. AI literacy training for all employees is growing fast."]},
+    {k:"trend",t:["사내 인재 마켓플레이스","Internal Talent Marketplace"],b:["사내 프로젝트나 공석을 플랫폼에 올리고, 직원이 스스로 지원하거나 AI가 맞는 사람을 추천하는 방식입니다. 외부 채용 전에 내부 이동으로 성장 기회를 주려는 흐름입니다.","A platform where internal projects and open roles are posted and employees apply or get AI matches. The aim is to grow people through internal moves before hiring outside."]}
+   ]},
+   {id:"design", t:["교육 기획","Training Design"], items:[
+    {k:"term",t:["교육 요구 분석","Training Needs Analysis (TNA)"],b:["'바람직한 수준'과 '현재 수준'의 차이를 찾아 어떤 교육이 필요한지 정하는 과정입니다. 설문, 인터뷰, 성과 데이터 등을 활용합니다. 교육이 아닌 다른 방법(제도, 도구)이 답일 수도 있다는 점을 함께 봅니다.","Finding the gap between the desired and current level to decide what training is needed, using surveys, interviews and performance data. Sometimes the answer is not training but a process or tool change."]},
+    {k:"term",t:["ADDIE 모델","ADDIE Model"],b:["교육 설계의 기본 단계로 분석(Analysis) → 설계(Design) → 개발(Development) → 실행(Implementation) → 평가(Evaluation) 순서로 진행합니다.","The classic instructional design process: Analysis → Design → Development → Implementation → Evaluation."]},
+    {k:"term",t:["학습 목표","Learning Objectives"],b:["교육이 끝난 뒤 학습자가 '무엇을 할 수 있게 되는지'를 행동 중심으로 적은 문장입니다. '이해한다'보다 '작성할 수 있다', '설명할 수 있다'처럼 확인 가능한 동사를 씁니다.","Statements of what learners will be able to do after training, written as observable actions — 'write' or 'explain' rather than 'understand'."],x:["예","교육 후, 참가자는 구조화 면접 질문 5개를 직접 작성할 수 있다.","Example","After the course, participants can write five structured interview questions."]},
+    {k:"term",t:["블렌디드 러닝","Blended Learning"],b:["온라인 학습과 오프라인 교육을 섞어 운영하는 방식입니다. 이론은 미리 온라인으로 듣고, 교실에서는 토론과 실습을 하는 '플립러닝(거꾸로 학습)'이 대표적입니다.","Mixing online and in-person learning. A common form is the flipped classroom: learn theory online first, then use class time for discussion and practice."]},
+    {k:"term",t:["LMS · LXP","LMS & LXP"],b:["LMS(학습관리시스템)는 교육 신청, 수강, 이수 기록을 관리하는 시스템입니다. LXP(학습경험플랫폼)는 개인 관심사에 맞는 콘텐츠를 추천해 스스로 배우도록 돕는 플랫폼입니다.","An LMS (Learning Management System) manages enrollment, courses and completion records. An LXP (Learning Experience Platform) recommends content based on personal interests to support self-directed learning."]},
+    {k:"term",t:["OJT · Off-JT","OJT & Off-JT"],b:["OJT(직장 내 교육)는 실제 업무를 하면서 선배나 상사에게 배우는 방식이고, Off-JT(직장 외 교육)는 업무에서 벗어나 강의실이나 온라인 과정에서 배우는 방식입니다. 둘을 함께 설계하면 효과가 큽니다.","OJT (On-the-Job Training) is learning while doing real work, guided by a senior or manager. Off-JT is learning away from the job, in a classroom or online course. Designing both together works best."]},
+    {k:"trend",t:["마이크로러닝","Microlearning"],b:["5~10분 안팎의 짧은 영상, 퀴즈, 카드 형태로 필요한 순간에 바로 배우는 방식입니다. 바쁜 직장인이 업무 중 틈틈이 학습하기 좋아 활용이 늘고 있습니다.","Learning in short 5–10 minute pieces — videos, quizzes, cards — right when needed. It suits busy employees who learn between tasks."]},
+    {k:"trend",t:["AI로 만드는 맞춤형 학습","AI-Personalized Learning"],b:["생성형 AI가 교육 콘텐츠 초안을 만들고, 학습자 수준에 맞춰 문제와 설명을 바꿔 주는 사례가 늘고 있습니다. 교육 담당자의 역할은 콘텐츠 제작보다 '학습 경험 설계'로 옮겨 가고 있습니다.","Generative AI now drafts course content and adapts questions and explanations to each learner's level. The L&D role is shifting from making content to designing learning experiences."]}
+   ]},
+   {id:"measure", t:["교육 평가","Training Evaluation"], items:[
+    {k:"term",t:["커크패트릭 4단계 모델","Kirkpatrick's Four Levels"],b:["교육 효과를 4단계로 평가하는 대표 모델입니다. 1단계 반응(만족도), 2단계 학습(지식 습득), 3단계 행동(현업 적용), 4단계 결과(조직 성과)로 갈수록 측정이 어렵지만 가치가 큽니다.","The best-known model for measuring training: Level 1 Reaction (satisfaction), Level 2 Learning (knowledge gained), Level 3 Behavior (use on the job), Level 4 Results (business impact). Higher levels are harder to measure but matter more."]},
+    {k:"term",t:["교육 ROI","Training ROI (Phillips Model)"],b:["필립스가 커크패트릭 모델에 5단계로 더한 지표로, 교육으로 얻은 금전적 이익이 비용 대비 얼마인지 계산합니다. ROI(%) = (교육 순이익 ÷ 교육 비용) × 100.","Phillips added a fifth level to Kirkpatrick: the financial return compared to cost. ROI (%) = (net program benefits ÷ program costs) × 100."]},
+    {k:"term",t:["사전·사후 테스트","Pre- and Post-Test"],b:["교육 전과 후에 같은 수준의 시험을 보고 점수 차이로 학습 효과를 확인하는 방법입니다. 2단계(학습) 평가에서 가장 많이 씁니다.","Giving a similar test before and after training and comparing scores to see what was learned. The most common Level 2 method."]},
+    {k:"term",t:["학습 전이","Transfer of Learning"],b:["교육에서 배운 내용이 실제 업무에 적용되는 정도입니다. 상사의 지원, 바로 써 볼 기회, 후속 코칭이 있을 때 전이가 잘 일어납니다.","How much of what was learned is actually used at work. Manager support, a chance to apply it right away, and follow-up coaching all help."]},
+    {k:"term",t:["NPS","Net Promoter Score"],b:["\"이 교육을 동료에게 추천하겠습니까?\"를 0~10점으로 묻고, 9~10점 비율에서 0~6점 비율을 뺀 점수입니다. 만족도보다 간단하고 비교하기 쉬워 교육 평가에도 씁니다.","Asks \"How likely are you to recommend this course to a colleague?\" on 0–10, then subtracts the share of 0–6 scores from the share of 9–10. Simpler to compare than satisfaction scores."]},
+    {k:"term",t:["성공 사례 기법","Success Case Method"],b:["브링커호프가 만든 평가 방법으로, 교육 후 가장 성공한 사람과 가장 효과가 없던 사람을 골라 인터뷰합니다. 무엇이 성과를 만들었고 무엇이 방해했는지 구체적인 이야기로 확인할 수 있습니다.","An evaluation method by Robert Brinkerhoff: after training, interview the most and least successful participants. Their stories show what helped results and what got in the way."]},
+    {k:"trend",t:["학습 데이터 분석","Learning Analytics"],b:["LMS·LXP의 학습 기록과 성과·이동 데이터를 연결해 '어떤 교육이 실제로 성과를 바꿨는지' 보려는 시도가 늘고 있습니다. 이수율보다 현업 변화와 스킬 향상을 보는 방향입니다.","Companies increasingly link learning records with performance and mobility data to see which programs truly change results — looking at on-the-job change and skill growth instead of completion rates."]}
+   ]},
+   {id:"culture", t:["조직 문화","Organizational Culture"], items:[
+    {k:"term",t:["조직문화","Organizational Culture"],b:["구성원들이 함께 가진 가치, 믿음, 행동 방식입니다. 샤인(Schein)은 눈에 보이는 상징·제도, 표방하는 가치, 당연하게 여기는 기본 가정의 세 층으로 설명했습니다.","The shared values, beliefs and behaviors of a group. Schein described three layers: visible artifacts, espoused values, and underlying basic assumptions."]},
+    {k:"term",t:["심리적 안전감","Psychological Safety"],b:["팀 안에서 질문하거나 실수를 말하거나 다른 의견을 내도 불이익을 받지 않을 거라고 믿는 상태입니다. 에이미 에드먼드슨이 제시했고, 구글 연구에서 좋은 팀의 가장 중요한 조건으로 꼽혔습니다.","The belief that you won't be punished for asking questions, admitting mistakes or disagreeing. Introduced by Amy Edmondson, and found by Google's research to be the top trait of effective teams."]},
+    {k:"term",t:["직원 몰입","Employee Engagement"],b:["직원이 일과 회사에 열정을 느끼고 자발적으로 노력하는 정도입니다. 몰입도 조사(서베이)로 측정하고, 결과를 바탕으로 개선 활동을 합니다.","How much employees feel committed to their work and company and give extra effort willingly. Measured by engagement surveys and followed by action plans."]},
+    {k:"term",t:["eNPS","Employee Net Promoter Score"],b:["\"우리 회사를 친구에게 일하기 좋은 곳으로 추천하겠습니까?\"를 0~10점으로 묻는 지표입니다. 계산은 NPS와 같고, 짧게 자주 조사하는 펄스 서베이에 많이 씁니다.","Asks \"How likely are you to recommend this company as a place to work?\" on 0–10, calculated like NPS. Often used in short, frequent pulse surveys."]},
+    {k:"term",t:["EVP","Employee Value Proposition"],b:["회사가 직원에게 약속하는 고유한 가치입니다. '우리 회사에서 일하면 무엇을 얻는가'에 대한 답으로, 채용 브랜딩과 조직문화의 중심 메시지가 됩니다.","The unique value a company promises its people — the answer to 'What do I get by working here?' It anchors both employer branding and culture."]},
+    {k:"term",t:["DEI","Diversity, Equity & Inclusion"],b:["다양성(여러 배경의 사람), 형평성(공정한 기회), 포용성(모두가 존중받고 참여하는 환경)을 뜻합니다. 최근 일부 기업은 소속감(Belonging)을 더해 DEIB라고도 합니다.","Diversity (people of many backgrounds), Equity (fair opportunity) and Inclusion (everyone respected and involved). Some add Belonging and say DEIB."]},
+    {k:"term",t:["직원 경험","Employee Experience (EX)"],b:["지원부터 입사, 성장, 퇴사까지 직원이 회사에서 겪는 모든 순간의 경험입니다. 고객 경험(CX)처럼 직원의 여정을 따라가며 불편한 지점을 찾아 개선합니다.","Everything an employee experiences at the company, from applying to joining, growing and leaving. Like customer experience (CX), you follow the employee journey to find and fix pain points."]},
+    {k:"term",t:["조직 진단","Organizational Diagnosis"],b:["설문, 인터뷰, 데이터로 조직의 현재 상태와 문제를 파악하는 일입니다. 결과를 바탕으로 조직문화 개선이나 리더십 교육 같은 변화 활동의 방향을 정합니다.","Using surveys, interviews and data to understand how an organization is doing and where its problems are. The results guide change efforts such as culture programs or leadership training."]},
+    {k:"trend",t:["하이브리드 근무와 출근 정책","Hybrid Work & Return-to-Office"],b:["재택과 출근을 섞는 하이브리드 근무가 자리 잡은 가운데, 출근 일수를 늘리려는 기업도 많습니다. '어디서 일하느냐'보다 협업과 소속감을 어떻게 지킬지가 문화의 과제가 되었습니다.","Hybrid work is now common, while many companies push for more office days. The cultural challenge is less about where people work and more about keeping collaboration and belonging."]},
+    {k:"trend",t:["조용한 퇴사 · 번아웃 관리","Quiet Quitting & Burnout"],b:["정해진 일만 하고 더 이상 마음을 쓰지 않는 '조용한 퇴사', 과로로 지치는 번아웃이 몰입을 떨어뜨리는 문제로 꼽힙니다. 리더의 1on1, 업무량 조정, 마음 건강 지원이 대응 방법으로 쓰입니다.","'Quiet quitting' (doing only the minimum and disengaging) and burnout are seen as major threats to engagement. Responses include leader 1-on-1s, workload balancing and mental health support."]}
+   ]}
+  ]
+ }
+};
+
+/* ---------- UI strings ---------- */
+const UI = {
+  term:["용어 · 개념","Term · Concept"], trend:["트렌드","Trend"],
+  home:["꾸러미","Basket"],
+  hrmSub:["인사 기획 · 채용 · 평가 · 보상 · 노무","Planning · Recruiting · Performance · Pay · Labor"],
+  hrdSub:["인재 육성 · 교육 기획 · 교육 평가 · 조직 문화","Talent · Training Design · Evaluation · Culture"],
+  pick:["보고 싶은 분야를 골라 보세요.","Pick a topic to explore."],
+  count:(n,t)=>[`용어 ${n} · 트렌드 ${t}`,`${n} terms · ${t} trends`],
+  back:["뒤로","Back"], prev:["이전","Previous"], next:["다음","Next"],
+  quizName:["랜덤 퀴즈","Random Quiz"],
+  quizSub:["HRM · HRD 용어 5문제, 들어올 때마다 새로 나와요","5 HRM · HRD questions, new every time"],
+  qStart:["준비됐나요? 설명을 읽고 알맞은 용어를 골라 보세요!","Ready? Read the description and pick the right term!"],
+  qNext:["좋아요, 다음 문제예요!","Okay, here's the next one!"],
+  qOk:["정답이에요! 아주 잘했어요.","Correct! Great job."],
+  qBad:["아쉬워요. 정답은","Not quite. The answer is"],
+  qAsk:["이 설명에 맞는 용어는?","Which term matches this?"],
+  qSee:["이 용어 자세히 보기","See this term"],
+  qNextBtn:["다음 문제","Next question"], qResult:["결과 보기","See results"],
+  qRetry:["다시 풀기","Try again"], qHome:["처음으로","Home"],
+  qWrong:["다시 볼 용어","Terms to review"],
+  qMsg:[["괜찮아요, 다시 하면 더 잘할 거예요!","No worries — you'll do better next time!"],["잘했어요! 조금만 더 해 봐요.","Nice work! Just a little more."],["만점이에요! 완벽해요!","Perfect score! Amazing!"]],
+  qOf:(s,n)=>[`${n}문제 중 ${s}문제 정답`,`${s} of ${n} correct`],
+  find:["용어 찾기","Find a term"],
+  sPh:["단어 입력 (2글자 이상)","Type a word (2+ letters)"],
+  sHint:["찾고 싶은 단어를 2글자 이상 입력하세요. 한국어, 영어 모두 돼요.","Type at least 2 letters. Korean or English both work."],
+  sNone:q=>[`'${q}'에 맞는 결과가 없어요.`,`No results for '${q}'.`],
+  sCount:n=>[`${n}개 찾음 · Enter를 누르면 첫 번째로 이동`,`${n} found · press Enter to open the first`],
+  pickKind:["무엇을 볼까요?","What would you like to see?"],
+  favs:["즐겨찾기","Favorites"],
+  favAdd:["즐겨찾기","Favorite"],
+  favSub:["이 기기에만 저장돼요. 다른 사람과 섞이지 않아요.","Saved on this device only. Never shared with others."],
+  favEmpty:["아직 즐겨찾기한 카드가 없어요. 카드 오른쪽 위 책갈피를 누르면 여기에 모여요.","No favorites yet. Tap the bookmark at the top right of a card to save it here."],
+  favCount:n=>[`${n}개 저장됨 · 누르면 카드로 넘겨 볼 수 있어요`,`${n} saved · tap one to flip through them`],
+  kindTerm:["용어","Terms"], kindTrend:["트렌드","Trends"],
+  kindTermSub:["분야별 용어와 개념","Key terms and concepts"],
+  kindTrendSub:["이번 반기 소식, 최신 순","This half-year, newest first"],
+  cntTerm:n=>[`용어 ${n}개`,`${n} terms`], cntTrend:n=>[`트렌드 ${n}개`,`${n} trends`],
+  noTrend:["이번 반기에 들어온 트렌드가 아직 없어요. 새 소식이 생기면 월요일에 추가돼요.","No trends yet this half-year. New ones are added on Mondays when there is news."]
+};
+
+/* ---------- State ---------- */
+let lang = 0; // 0 = ko, 1 = en
+try{ if(localStorage.getItem("hrp-lang")==="en") lang=1; }catch(e){}
+const state = {area:null, kind:null, cat:null, i:0}; // kind = "term" | "trend"
+const kindItems = (C,kind) => C.items.filter(x=>x.k===kind);
+const $ = s=>document.querySelector(s);
+const view = $("#view");
+const L = pair => pair[lang];
+const esc = s => s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  document.documentElement.lang = lang ? "en" : "ko";
+  $("#lang").setAttribute("aria-pressed", lang ? "true":"false");
+  $("#back").hidden = !state.area;
+  $("#back").setAttribute("aria-label", L(UI.back));
+  $("#find").setAttribute("aria-label", L(UI.find));
+  $("#favbtn").setAttribute("aria-label", L(UI.favs));
+  $("#deco").hidden = !state.area; // food garnish only on inner screens, not the lobby
+  if(!state.area) return renderHome();
+  if(state.area==="quiz") return renderQuiz();
+  if(state.area==="favs") return state.cat ? renderFavDeck() : renderFavList();
+  if(!state.kind) return renderArea();
+  if(!state.cat) return renderKindList();
+  renderDetail();
+}
+
+function renderHome(){
+  $("#brand").innerHTML = `HR<span class="kr">${esc(L(UI.home))}</span><img class="basket" src="${spriteURL("basket")}" alt="" width="24" height="18">`;
+  const big=(k,code,name,subs)=>`
+    <button class="big ${k}" data-go="${k}">
+      <span class="txt"><span class="code">${code}</span><span class="name">${esc(name)}</span><span class="subs">${esc(subs)}</span></span>
+      <img class="sprite" src="${spriteURL(k)}" alt="" width="96" height="96">
+    </button>`;
+  view.innerHTML = `<div class="home">
+    ${big("hrm","HRM",L(DATA.hrm.name),L(UI.hrmSub))}
+    ${big("hrd","HRD",L(DATA.hrd.name),L(UI.hrdSub))}
+    ${big("quiz","QUIZ",L(UI.quizName),L(UI.quizSub))}
+  </div>`;
+  view.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+}
+
+/* HRM / HRD: choose Terms or Trends first */
+function renderArea(){
+  const A = DATA[state.area];
+  $("#brand").innerHTML = `${state.area.toUpperCase()}<small>${esc(L(A.name))}</small>`;
+  let nTerm=0, nTrend=0, latest="";
+  for(const c of A.cats) for(const x of c.items){
+    if(x.k==="term") nTerm++; else { nTrend++; if((x.added||"")>latest) latest=x.added; }
+  }
+  view.innerHTML = `
+  <div class="intro"><h1>${esc(L(A.name))}</h1><p>${esc(L(UI.pickKind))}</p></div>
+  <div class="kinds">
+    <button class="kind term" data-kind="term">${pxIcon(ICON.book)}
+      <span class="kt">${esc(L(UI.kindTerm))}</span><span class="ks">${esc(L(UI.kindTermSub))}</span>
+      <span class="kc">${esc(L(UI.cntTerm(nTerm)))}</span></button>
+    <button class="kind trend" data-kind="trend">${pxIcon(ICON.spark)}
+      <span class="kt">${esc(L(UI.kindTrend))}</span><span class="ks">${esc(L(UI.kindTrendSub))}</span>
+      <span class="kc">${esc(L(UI.cntTrend(nTrend)))}${latest?` · ${esc(shortDate(latest))}`:""}</span></button>
+  </div>`;
+  view.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>go(state.area,b.dataset.kind));
+}
+
+/* the same 1–5 (or 1–4) categories, counting only the chosen kind */
+function renderKindList(){
+  const A = DATA[state.area], kind = state.kind;
+  const kname = L(kind==="term"?UI.kindTerm:UI.kindTrend);
+  $("#brand").innerHTML = `${state.area.toUpperCase()}<small>${esc(kname)}</small>`;
+  view.innerHTML = `
+  <div class="intro"><h1>${esc(L(A.name))} · ${esc(kname)}</h1><p>${esc(L(UI.pick))}</p></div>
+  <div class="list">${A.cats.map((c,n)=>{
+    const cnt=kindItems(c,kind).length;
+    return `<button class="cat ${kind==="trend"?"tr":""}" data-cat="${c.id}">
+      <span class="num">${n+1}</span>
+      <span class="txt"><span class="t">${esc(L(c.t))}</span><span class="s">${esc(c.t[1-lang])}</span></span>
+      <span class="cnt">${esc(L(kind==="term"?UI.cntTerm(cnt):UI.cntTrend(cnt)))}</span>
+    </button>`}).join("")}</div>`;
+  view.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>go(state.area,kind,b.dataset.cat,0));
+}
+
+function renderDetail(){
+  const A = DATA[state.area], C = A.cats.find(c=>c.id===state.cat), items=kindItems(C,state.kind), it=items[state.i];
+  const kname = L(state.kind==="term"?UI.kindTerm:UI.kindTrend);
+  $("#brand").innerHTML = `${state.area.toUpperCase()}<small>${esc(L(C.t))}</small>`;
+  const crumb = `<div class="crumb"><span>${state.area.toUpperCase()}</span><span>›</span><span>${esc(kname)}</span><span>›</span><b>${esc(L(C.t))}</b></div>`;
+  if(!it){
+    view.innerHTML = `${crumb}<article class="card"><span class="chip trend">${esc(L(UI.trend))}</span><p class="body">${esc(L(UI.noTrend))}</p></article>`;
+    return;
+  }
+  showDeck(items.map(it=>({a:state.area,it})), crumb);
+}
+
+/* One card + dots + < > pager. Used by the category decks and the Favorites deck. */
+function showDeck(entries, crumb){
+  const {a, it} = entries[state.i];
+  const isTrend = it.k==="trend", id = favId(a,it), on = isFav(id);
+  const ex = it.x ? `<p class="ex"><b>${esc(it.x[lang*2])}</b>${esc(it.x[lang*2+1])}</p>` : "";
+  view.innerHTML = `
+  ${crumb}
+  <article class="card dcard" aria-live="polite">
+    <div class="chiprow">
+      <span class="chip ${isTrend?"trend":""}">${esc(L(isTrend?UI.trend:UI.term))}</span>
+      <button class="fav" id="fav" aria-pressed="${on}" aria-label="${esc(L(UI.favAdd))}">${bookmarkSVG(on)}</button>
+    </div>
+    <h2>${esc(L(it.t))}</h2>
+    <p class="alt">${esc(it.t[1-lang])}</p>
+    <p class="body">${esc(L(it.b))}</p>
+    ${ex}
+    ${isTrend?`<span class="asof">${esc(addedLabel(it.added))}${srcLink(it.src)}</span>`:(it.src?`<span class="asof">${srcLink(it.src).replace(/^ · /,"")}</span>`:"")}
+  </article>
+  <div class="dots" aria-hidden="true">${entries.map((x,n)=>`<span class="dot ${x.it.k==="trend"?"tr":""} ${n===state.i?"on":""}"></span>`).join("")}</div>
+  <div class="spacer"></div>
+  <nav class="pager">
+    <button class="pbtn" id="prev" aria-label="${esc(L(UI.prev))}" ${state.i===0?"disabled":""}>${pxIcon(ICON.left)}</button>
+    <span class="pos">${state.i+1} / ${entries.length}</span>
+    <button class="pbtn" id="next" aria-label="${esc(L(UI.next))}" ${state.i===entries.length-1?"disabled":""}>${pxIcon(ICON.right)}</button>
+  </nav>`;
+  $("#prev").onclick=()=>step(-1);
+  $("#next").onclick=()=>step(1);
+  $("#fav").onclick=()=>{ const now=toggleFav(id); const b=$("#fav"); b.innerHTML=bookmarkSVG(now); b.setAttribute("aria-pressed",now); };
+}
+
+/* ---------- Favorites: kept in this browser only (localStorage), so every phone has its own ---------- */
+let FAV = [];
+try{ const v=JSON.parse(localStorage.getItem("hrp-favs")||"[]"); if(Array.isArray(v)) FAV=v.filter(x=>typeof x==="string"); }catch(e){}
+const favId = (a,it) => `${a}|${it.k}|${it.t[0]}`;   // Korean title is stable across trend updates
+const isFav = id => FAV.includes(id);
+function toggleFav(id){
+  const n=FAV.indexOf(id);
+  if(n<0) FAV.unshift(id); else FAV.splice(n,1);    // newest favorite first
+  try{ localStorage.setItem("hrp-favs",JSON.stringify(FAV)); }catch(e){}
+  return n<0;
+}
+function favEntries(){
+  const out=[];
+  for(const id of FAV){
+    const [a,k,ko]=id.split("|");
+    if(!DATA[a]) continue;
+    for(const c of DATA[a].cats){ const it=kindItems(c,k).find(x=>x.t[0]===ko); if(it){ out.push({a,k,c,it}); break; } }
+  }
+  return out; // a trend that expired with its half-year simply drops out
+}
+function renderFavList(){
+  $("#brand").innerHTML = `${esc(L(UI.favs))}`;
+  const list=favEntries();
+  view.innerHTML = `
+  <div class="intro"><h1>${esc(L(UI.favs))}</h1><p>${esc(L(UI.favSub))}</p></div>
+  ${!list.length ? `<p class="hint favempty">${bookmarkSVG(false)}<span>${esc(L(UI.favEmpty))}</span></p>` :
+  `<p class="hint">${esc(L(UI.favCount(list.length)))}</p>
+   <div class="list favlist">${list.map((x,n)=>{
+     const tr=x.it.k==="trend";
+     return `<button class="hit" data-n="${n}">
+       <span class="path"><span class="k ${tr?"trend":""}">${esc(L(tr?UI.trend:UI.term))}</span>${x.a.toUpperCase()} › ${esc(L(x.c.t))}</span>
+       <span class="ht">${esc(L(x.it.t))}</span><span class="ha">${esc(x.it.t[1-lang])}</span>
+     </button>`;}).join("")}</div>`}`;
+  view.querySelectorAll(".favlist .hit").forEach(b=>b.onclick=()=>{ location.hash=`favs-${+b.dataset.n+1}`; });
+}
+function renderFavDeck(){
+  const entries=favEntries();
+  if(!entries.length){ state.cat=null; return renderFavList(); }
+  state.i=Math.min(state.i,entries.length-1);
+  const x=entries[state.i];
+  $("#brand").innerHTML = `${esc(L(UI.favs))}<small>${x.a.toUpperCase()}</small>`;
+  const crumb=`<div class="crumb"><span>${esc(L(UI.favs))}</span><span>›</span><span>${x.a.toUpperCase()}</span><span>›</span><b>${esc(L(x.c.t))}</b></div>`;
+  showDeck(entries.map(e=>({a:e.a,it:e.it})), crumb);
+}
+
+/* Pixel bookmark: red ribbon with a yellow star. Off = outlines only, on = filled. */
+const BM_RIBBON=[".RRRRRRRRRRR.","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRRRRRRRRR","RRRRRR.RRRRRR","RRRRR...RRRRR","RRRR.....RRRR","RRR.......RRR"];
+const BM_STAR=["...X...","..XXX..","XXXXXXX",".XXXXX.","..XXX..",".XX.XX.","XX...XX"];
+function bookmarkSVG(on){
+  const W=13, H=15, rib=(x,y)=>y>=0&&y<H&&x>=0&&x<W&&BM_RIBBON[y][x]==="R";
+  const star=(x,y)=>{ const sx=x-3, sy=y-2; return sy>=0&&sy<7&&sx>=0&&sx<7&&BM_STAR[sy][sx]==="X"; };
+  const edge=(f,x,y)=>!f(x+1,y)||!f(x-1,y)||!f(x,y+1)||!f(x,y-1);
+  let r="";
+  const px=(x,y,c)=>{ r+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`; };
+  for(let y=0;y<H;y++) for(let x=0;x<W;x++){
+    if(!rib(x,y)) continue;
+    const s=star(x,y);
+    if(s){ if(on) px(x,y, edge(star,x,y)?"#e0a100":"#ffd23f"); else if(edge(star,x,y)) px(x,y,"#f2b705"); }
+    else if(edge(rib,x,y)) px(x,y, on?"#b8323a":"#e5484d");
+    else if(on) px(x,y, (x===2&&y>=2&&y<=4)?"#ff9fa2":"#e5484d"); // small shine like the reference
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="26" height="30" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+}
+
+function srcLink(src){
+  if(!src||!src.url||!/^https:\/\//.test(src.url)) return "";
+  return ` · <a class="src" href="${esc(src.url)}" target="_blank" rel="noopener">${esc(lang?"Source":"출처")}: ${esc(src.name||src.url)}</a>`;
+}
+
+/* Weekly trends: trends.json (published next to this page) replaces the built-in trend cards.
+   Shape: {asOf:[ko,en], updated:"YYYY-MM-DD", cats:{plan:[{t:[ko,en], b:[ko,en], src:{name,url}}], recruit:[...], ...}} */
+/* Trends live for one half-year (Jan–Jun, Jul–Dec): cards added in an earlier half are hidden,
+   so on Jan 1 / Jul 1 the list starts fresh even before the Monday update runs. Newest cards come first. */
+const BUILTIN_ADDED = "2026-11-15";
+function parseDay(s){ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||""); return m?new Date(+m[1],+m[2]-1,+m[3]):null; }
+function halfOf(d){ return d.getFullYear()*2+(d.getMonth()<6?0:1); }
+function thisHalf(s){ const d=parseDay(s); return !!d && halfOf(d)===halfOf(new Date()); }
+function shortDate(s){
+  const d=parseDay(s); if(!d) return "";
+  const en=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return lang ? `latest ${en[d.getMonth()]} ${d.getDate()}` : `최근 ${d.getMonth()+1}월 ${d.getDate()}일`;
+}
+function addedLabel(s){
+  const d=parseDay(s); if(!d) return L(AS_OF);
+  const en=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return lang ? `Added ${en[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}` : `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 추가`;
+}
+// built-in trend cards follow the same rule
+for(const a of ["hrm","hrd"]) for(const c of DATA[a].cats){
+  c.items=c.items.filter(x=>x.k!=="trend"||thisHalf(BUILTIN_ADDED));
+  c.items.forEach(x=>{ if(x.k==="trend") x.added=BUILTIN_ADDED; });
+}
+function applyTrends(j){
+  if(!j||typeof j!=="object"||!j.cats||typeof j.cats!=="object") return;
+  if(Array.isArray(j.asOf)&&j.asOf.length===2) AS_OF=j.asOf;
+  // trends.json is the full list: a category with no current half-year cards shows none
+  for(const a of ["hrm","hrd"]) for(const c of DATA[a].cats){
+    const list=Array.isArray(j.cats[c.id])?j.cats[c.id]:[];
+    const ok=list.filter(x=>x&&Array.isArray(x.t)&&Array.isArray(x.b)&&x.t.length===2&&x.b.length===2&&thisHalf(x.added||j.updated))
+      .map((x,n)=>({k:"trend",t:x.t,b:x.b,src:x.src,added:x.added||j.updated,n}))
+      .sort((p,q)=>q.added.localeCompare(p.added)||p.n-q.n); // newest first, file order within a day
+    c.items=c.items.filter(x=>x.k==="term").concat(ok);
+  }
+  read();
+}
+fetch("trends.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(applyTrends).catch(()=>{});
+
+function step(d){
+  if(state.area==="favs"){
+    const j=state.i+d; if(j<0||j>=favEntries().length) return;
+    location.hash=`favs-${j+1}`; return;
+  }
+  const n = kindItems(DATA[state.area].cats.find(c=>c.id===state.cat),state.kind).length;
+  const j = state.i + d; if(j<0||j>=n) return;
+  go(state.area,state.kind,state.cat,j);
+}
+
+/* ---------- Pixel art ----------
+   Characters are 16x16 maps; each letter is a color in that sprite's palette, "." is transparent. */
+const SPRITES = {
+  hrm:{ // smart one with round glasses and a tie
+    pal:{K:"#1d2b3a",H:"#2c4a7a",S:"#ffdcbf",G:"#2a3550",W:"#d9f0ff",E:"#1d2b3a",m:"#c8584e",P:"#ffaaaa",B:"#5aa9e6",R:"#e05a5a"},
+    px:["................",
+        ".....KKKKKK.....",
+        "....KHHHHHHK....",
+        "...KHHHHHHHHK...",
+        "...KHHHHHHHHK...",
+        "...KHSSSSSSHK...",
+        "...KGGGSSGGGK...",
+        "...KGWGGGGWGK...",
+        "...KGGGSSGGGK...",
+        "...KSPSSSSPSK...",
+        "....KSSmmSSK....",
+        ".....KKKKKK.....",
+        "....KBBWRWBBK...",
+        "...KBBBWRWBBBK..",
+        "...KBBBBRBBBBK..",
+        "...KKKKKKKKKKK.."]},
+  hrd:{ // cozy one with a knit beanie and scarf
+    pal:{K:"#3a2a22",Y:"#fff3d6",O:"#f29a6b",C:"#fff3d6",H:"#8a5a3c",S:"#ffdcbf",E:"#3a2a22",P:"#ff9e9e",R:"#e86b5a",M:"#ffe2a8",m:"#c8584e",T:"#ff8fa3",D:"#6b4229"},
+    px:[".......YY.......",
+        ".....KKKKKK.....",
+        "....KOOOOOOK....",
+        "...KOOOOOOOOK...",
+        "...KCCCCCCCCK...",
+        "...KHHHHHHHHK...",
+        "...KHSSSSSSHK...",
+        "...KHESSSSEHK...",
+        "..TKHESSSSEHKT..",
+        "..HDKPSmmSPKDH..",
+        "..DH.KKKKKK.HD..",
+        "..HDRRRRRRRRDH..",
+        "..DHKMMMRRMMHD..",
+        "..KKMMMMRRMMMKK.",
+        "...KMMMMMMMMMK..",
+        "...KKKKKKKKKKK.."]},
+  quiz:{ // teacher with a graduation cap and a pointer
+    pal:{K:"#23303c",D:"#2b3440",Y:"#f2c14e",H:"#b9c2cc",S:"#ffdcbf",E:"#23303c",P:"#ffaaaa",G:"#4f9d7a",W:"#ffffff",L:"#b07a42",m:"#c8584e"},
+    px:["....KKKKKKKK....",
+        "..KDDDDDDDDDDK..",
+        ".Y..KDDDDDDK....",
+        ".Y.KHHHHHHHHK...",
+        "...KHSSSSSSHK.L.",
+        "...KSKKSSKKSK.L.",
+        "...KSESSSSESK.L.",
+        "...KPSSSSSSPK.L.",
+        "....KSSmmSSK..L.",
+        ".....KKKKKK...L.",
+        "....KGGWWGGK..L.",
+        "...KGGGWWGGGKSS.",
+        "...KGGGWWGGGK...",
+        "...KGGGGGGGGK...",
+        "...KGGGGGGGGK...",
+        "...KKKKKKKKKK..."]}
+};
+/* Basket logo and the small groceries scattered on inner screens */
+Object.assign(SPRITES, {
+  basket:{pal:{K:"#3b2a1e",O:"#e0a868",B:"#a86b32",R:"#e2504a",G:"#5bb36a"},
+    px:["....KKKK....",
+        "...K..G.K...",
+        "..KRR.GG.K..",
+        "KKKKKKKKKKKK",
+        "KOOOOOOOOOOK",
+        ".KOBOBOBOBK.",
+        ".KBOBOBOBOK.",
+        ".KOBOBOBOBK.",
+        "..KKKKKKKK.."]},
+  paprika:{pal:{K:"#5a1e1a",R:"#e5483d",D:"#b8302a",W:"#ff9d92",G:"#4f9d4a"},
+    px:["...KG...","..KGGK..",".KRRRRK.","KRWRRDRK","KRRRRDRK","KRRRRDRK",".KRRRDK.","..KKKK.."]},
+  sweetpotato:{pal:{K:"#3e1f3c",P:"#8e4a8a",L:"#b77ab3",Y:"#f6c85f"},
+    px:["..KKKKK...",".KPPPPPKK.","KPPLPPPPYK","KPPPPPPPYK",".KPPPPPKK.","..KKKKK..."]},
+  apple:{pal:{K:"#5a1e1a",R:"#e2504a",W:"#ffd0cc",B:"#7a4a26",G:"#5bb36a"},
+    px:["....BG..","...B....",".KKKKKK.","KRWRRRRK","KRRRRRRK","KRRRRRRK",".KRRRRK.","..KKKK.."]},
+  egg:{pal:{K:"#7a6a50",W:"#fffaf0",Y:"#ffc93c"},
+    px:["..KKKK..",".KWWWWK.","KWWYYWWK","KWYYYYWK","KWWYYWWK",".KWWWWK.","..KKKK.."]},
+  bread:{pal:{K:"#5a3a1a",B:"#e0a85a",D:"#b9772f"},
+    px:["..KKKK..",".KBBBBK.","KBDBBDBK","KBBBBBBK","KBBBBBBK","KKKKKKKK"]}
+});
+/* few and spread out so they decorate empty corners instead of crowding the content */
+const DECO = [
+  // bottom-left corner, below the cards
+  {s:"egg",         pos:"bottom:44px;left:118px",  rot:0},
+  {s:"sweetpotato", pos:"bottom:16px;left:28px",   rot:-8},
+  // top-right, in the empty strip beside the page heading
+  {s:"apple",       pos:"top:76px;right:132px",    rot:8},
+  {s:"bread",       pos:"top:86px;right:24px",     rot:-6}
+];
+function buildDeco(){
+  $("#deco").innerHTML = DECO.map(d=>{
+    const p=SPRITES[d.s].px, w=p[0].length*3, h=p.length*3;
+    return `<img src="${spriteURL(d.s)}" alt="" width="${w}" height="${h}" style="${d.pos};transform:rotate(${d.rot}deg)">`;
+  }).join("");
+}
+const spriteCache = {};
+function spriteURL(name){
+  if(spriteCache[name]) return spriteCache[name];
+  const s=SPRITES[name], c=document.createElement("canvas");
+  c.width=s.px[0].length; c.height=s.px.length;
+  const g=c.getContext("2d");
+  s.px.forEach((row,y)=>[...row].forEach((ch,x)=>{ if(ch!=="."&&s.pal[ch]){ g.fillStyle=s.pal[ch]; g.fillRect(x,y,1,1); } }));
+  return spriteCache[name]=c.toDataURL();
+}
+const ICON = {
+  glass:["..XXXX....",".X....X...","X......X..","X......X..","X......X..","X......X..",".X....XX..","..XXXXXXX.",".......XXX","........XX"],
+  left:["...XX","..XX.",".XX..","XX...",".XX..","..XX.","...XX"],
+  book:[".XXX..XXX.","X...XX...X","X.X.XX.X.X","X...XX...X","X.X.XX.X.X","X...XX...X","XXXXXXXXXX"],
+  bm:["XXXXXXX","X.....X","X..X..X","X.XXX.X","X..X..X","X.....X","X..X..X","X.X.X.X","XX...XX"],
+  spark:["...X...","...X...","..XXX..","XXXXXXX","..XXX..","...X...","...X..."],
+  right:["XX...",".XX..","..XX.","...XX","..XX.",".XX..","XX..."]
+};
+function pxIcon(map){
+  let r="";
+  map.forEach((row,y)=>[...row].forEach((ch,x)=>{ if(ch==="X") r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`; }));
+  return `<svg viewBox="0 0 ${map[0].length} ${map.length}" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${r}</svg>`;
+}
+
+/* ---------- Search (like Ctrl+F across every card) ---------- */
+let hits = [];
+function openSearch(){
+  $("#search").hidden=false;
+  const q=$("#q"); q.placeholder=L(UI.sPh); q.focus(); q.select();
+  runSearch();
+}
+function closeSearch(){ $("#search").hidden=true; }
+function hl(text,q){
+  const i=text.toLowerCase().indexOf(q);
+  if(i<0) return esc(text);
+  return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length));
+}
+function snip(text,q){
+  const i=text.toLowerCase().indexOf(q);
+  if(i<0) return esc(text.length>70?text.slice(0,70)+"…":text);
+  const s=Math.max(0,i-18), e=Math.min(text.length,i+q.length+50);
+  return (s>0?"…":"")+esc(text.slice(s,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length,e))+(e<text.length?"…":"");
+}
+function runSearch(){
+  const raw=$("#q").value.trim(), q=raw.toLowerCase(), box=$("#results");
+  hits=[];
+  if([...q].length<2){ box.innerHTML=`<p class="hint">${esc(L(UI.sHint))}</p>`; return; }
+  for(const a of ["hrm","hrd"]) for(const c of DATA[a].cats) for(const k of ["term","trend"]) kindItems(c,k).forEach((it,i)=>{
+    const tl=it.t.map(s=>s.toLowerCase()), bl=it.b.map(s=>s.toLowerCase());
+    let score=0;
+    if(tl.some(s=>s.startsWith(q))) score=4; else if(tl.some(s=>s.includes(q))) score=3; else if(bl.some(s=>s.includes(q))) score=1;
+    if(score) hits.push({a,k,c:c.id,i,it,score});
+  });
+  hits.sort((x,y)=>y.score-x.score);
+  hits=hits.slice(0,40);
+  if(!hits.length){ box.innerHTML=`<p class="hint">${esc(L(UI.sNone(raw)))}</p>`; return; }
+  box.innerHTML=`<p class="hint">${esc(L(UI.sCount(hits.length)))}</p>`+hits.map((h,n)=>{
+    const C=DATA[h.a].cats.find(c=>c.id===h.c), it=h.it, tr=it.k==="trend";
+    const bodyLang = it.b[lang].toLowerCase().includes(q) ? lang : (it.b[1-lang].toLowerCase().includes(q) ? 1-lang : lang);
+    return `<button class="hit" data-n="${n}">
+      <span class="path"><span class="k ${tr?"trend":""}">${esc(L(tr?UI.trend:UI.term))}</span>${h.a.toUpperCase()} › ${esc(L(C.t))}</span>
+      <span class="ht">${hl(it.t[lang],q)}</span>
+      <span class="ha">${hl(it.t[1-lang],q)}</span>
+      ${h.score===1?`<span class="hs">${snip(it.b[bodyLang],q)}</span>`:""}
+    </button>`;
+  }).join("");
+  box.querySelectorAll(".hit").forEach(b=>b.onclick=()=>openHit(+b.dataset.n));
+}
+function openHit(n){ const h=hits[n]; if(!h) return; closeSearch(); go(h.a,h.k,h.c,h.i); }
+
+/* ---------- Quiz: 5 random terms from HRM + HRD mixed ---------- */
+const QN = 5;
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function allTerms(){
+  const out=[];
+  for(const a of ["hrm","hrd"]) for(const c of DATA[a].cats) kindItems(c,"term").forEach((it,i)=>out.push({a,c:c.id,i,it}));
+  return out;
+}
+function makeQuiz(){
+  const pool=shuffle(allTerms());
+  const qs=pool.slice(0,QN).map(ans=>({ans, opts:shuffle([ans,...shuffle(pool.filter(x=>x!==ans)).slice(0,3)]), picked:null}));
+  return {qs, n:0, score:0, done:false};
+}
+const escRe = s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+function maskText(it,l){
+  // hide the term's own name inside its description so the question isn't a giveaway
+  const parts=new Set();
+  for(const t of it.t){ parts.add(t.trim()); t.split(/\s*(?:·|,|\(|\)|&|\/|\bvs\b|\band\b)\s*/i).forEach(p=>parts.add(p.trim())); }
+  let s=it.b[l];
+  [...parts].filter(p=>p.length>=2).sort((x,y)=>y.length-x.length).forEach(p=>{ s=s.replace(new RegExp(escRe(p),"gi"),"□□"); });
+  return s;
+}
+function teacher(msg){
+  return `<div class="teacher"><img class="sprite" src="${spriteURL("quiz")}" alt="" width="80" height="80"><div class="bubble" aria-live="polite">${esc(msg)}</div></div>`;
+}
+function renderQuiz(){
+  const Q=state.quiz;
+  $("#brand").innerHTML=`QUIZ<small>${esc(L(UI.quizName))}</small>`;
+  if(Q.done){
+    const wrong=Q.qs.filter(x=>x.picked!==x.ans);
+    const tier = Q.score===QN ? 2 : Q.score>=3 ? 1 : 0;
+    view.innerHTML=`<div class="quizview">
+      ${teacher(L(UI.qMsg[tier]))}
+      <div class="score"><b>${Q.score}</b><span> / ${QN}</span><p>${esc(L(UI.qOf(Q.score,QN)))}</p></div>
+      ${wrong.length?`<p class="qsub">${esc(L(UI.qWrong))}</p><div class="list">${wrong.map((x,n)=>{
+        const C=DATA[x.ans.a].cats.find(c=>c.id===x.ans.c);
+        return `<button class="cat" data-w="${n}"><span class="num">${x.ans.a==="hrm"?"M":"D"}</span><span class="txt"><span class="t">${esc(L(x.ans.it.t))}</span><span class="s">${x.ans.a.toUpperCase()} › ${esc(L(C.t))}</span></span></button>`;
+      }).join("")}</div>`:""}
+      <div class="qnav"><button class="pxbtn ghost" id="qhome">${esc(L(UI.qHome))}</button><button class="pxbtn" id="qretry">${esc(L(UI.qRetry))}</button></div>
+    </div>`;
+    view.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{ const x=wrong[+b.dataset.w].ans; go(x.a,"term",x.c,x.i); });
+    $("#qhome").onclick=()=>go(null);
+    $("#qretry").onclick=()=>{ state.quiz=makeQuiz(); renderQuiz(); window.scrollTo(0,0); };
+    return;
+  }
+  const q=Q.qs[Q.n], answered=q.picked!==null;
+  const msg = !answered ? L(Q.n===0?UI.qStart:UI.qNext) : (q.picked===q.ans ? L(UI.qOk) : `${L(UI.qBad)} '${L(q.ans.it.t)}'`);
+  view.innerHTML=`<div class="quizview">
+    ${teacher(msg)}
+    <div class="qprog">${Q.qs.map((x,k)=>`<span class="${x.picked===null?(k===Q.n?"cur":""):(x.picked===x.ans?"ok":"bad")}"></span>`).join("")}<span class="qpos">${Q.n+1}/${QN}</span></div>
+    <article class="card qcard"><span class="chip">${esc(L(UI.qAsk))}</span><p class="body">${esc(maskText(q.ans.it,lang))}</p></article>
+    <div class="opts">${q.opts.map((o,k)=>{
+      const cls=!answered?"":(o===q.ans?"ok":(o===q.picked?"bad":"dim"));
+      return `<button class="opt ${cls}" data-k="${k}" ${answered?"disabled":""}><span class="key">${"ABCD"[k]}</span><span>${esc(L(o.it.t))}</span></button>`;
+    }).join("")}</div>
+    ${answered?`<div class="qnav"><button class="pxbtn ghost" id="qsee">${esc(L(UI.qSee))}</button><button class="pxbtn" id="qgo">${esc(L(Q.n===QN-1?UI.qResult:UI.qNextBtn))}</button></div>`:""}
+  </div>`;
+  view.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    if(q.picked!==null) return;
+    q.picked=q.opts[+b.dataset.k];
+    if(q.picked===q.ans) Q.score++;
+    renderQuiz();
+  });
+  if(answered){
+    $("#qgo").onclick=()=>{ if(Q.n===QN-1) Q.done=true; else Q.n++; renderQuiz(); window.scrollTo(0,0); };
+    $("#qsee").onclick=()=>go(q.ans.a,"term",q.ans.c,q.ans.i);
+  }
+}
+
+/* Hash routing: #hrm, #hrm-term, #hrm-trend-recruit-2, #quiz */
+function go(area,kind,cat,i){
+  const h = !area ? "" : !kind ? area : !cat ? `${area}-${kind}` : `${area}-${kind}-${cat}-${(i||0)+1}`;
+  if(location.hash.slice(1)===h){ read(); return; }
+  location.hash = h;
+}
+function read(){
+  const h = location.hash.slice(1);
+  const m = h.match(/^(hrm|hrd)(?:-(term|trend)(?:-([a-z]+)-(\d+))?)?$/);
+  const prev = state.area;
+  state.area=null; state.kind=null; state.cat=null; state.i=0;
+  const fm = h.match(/^favs(?:-(\d+))?$/);
+  if(fm){
+    state.area="favs";
+    if(fm[1]){ state.cat="deck"; state.i=Math.max(+fm[1]-1,0); }
+  } else if(h==="quiz"){
+    state.area="quiz";
+    if(prev!=="quiz"||!state.quiz) state.quiz=makeQuiz(); // a fresh random set every time you enter
+  } else if(m){
+    state.area=m[1];
+    state.kind=m[2]||null;
+    const C = m[3] && DATA[m[1]].cats.find(c=>c.id===m[3]);
+    if(C){ state.cat=C.id; state.i=Math.min(Math.max(+m[4]-1,0),Math.max(kindItems(C,state.kind).length-1,0)); }
+  }
+  render(); window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",read);
+
+$("#back").onclick=()=>{ if(state.cat) go(state.area,state.kind); else if(state.kind) go(state.area); else go(null); };
+$("#lang").onclick=()=>{ lang=1-lang; try{localStorage.setItem("hrp-lang",lang?"en":"ko")}catch(e){} render(); };
+$("#back").innerHTML=pxIcon(ICON.left);
+$("#find").innerHTML=pxIcon(ICON.glass);
+$("#favbtn").innerHTML=pxIcon(ICON.bm);
+$("#favbtn").onclick=()=>go("favs");
+$("#sicon").innerHTML=pxIcon(ICON.glass);
+buildDeco();
+$("#find").onclick=openSearch;
+$("#sclose").onclick=closeSearch;
+$("#scrim").onclick=closeSearch;
+$("#q").addEventListener("input",runSearch);
+$("#q").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&hits.length){ e.preventDefault(); openHit(0); }
+  if(e.key==="Escape") closeSearch();
+});
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="f"){ e.preventDefault(); openSearch(); return; }
+  if(!$("#search").hidden) return;
+  if(e.key==="/"&&!e.target.closest("input")){ e.preventDefault(); openSearch(); return; }
+  if(!state.cat) return;
+  if(e.key==="ArrowLeft") step(-1);
+  if(e.key==="ArrowRight") step(1);
+});
+/* Swipe left/right on the card */
+let sx=null;
+view.addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
+view.addEventListener("touchend",e=>{ if(sx===null||!state.cat) return; const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60) step(dx<0?1:-1); sx=null; });
+
+read();
+</script>
+<script>
+// offline support: cache the app after the first visit
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }
+</script>
+</body>
+</html>
