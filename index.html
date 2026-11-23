@@ -204,6 +204,16 @@ main{flex:1;display:flex;flex-direction:column;min-width:0}
 .sugdone{align-items:center;text-align:center;gap:14px;padding:28px 18px}
 .sugdone svg{width:39px;height:45px}
 .fav{appearance:none;border:0;background:none;padding:2px;margin:-8px -8px 0 0;cursor:pointer;line-height:0;flex:none}
+.cardtools{display:flex;align-items:flex-start;gap:6px;flex:none}
+.memobtn{appearance:none;width:30px;height:30px;margin-top:-6px;display:grid;place-items:center;border:2px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;padding:0}
+.memobtn svg{width:16px;height:16px}
+.memobtn.on{background:var(--sky);color:var(--on-sky)}
+.memobtn:active{transform:scale(.9)}
+.mtext{width:100%;box-sizing:border-box;border:3px solid var(--line);background:var(--surface);color:var(--ink);font:15px/1.6 var(--font-ui);padding:10px 12px;border-radius:0;box-shadow:3px 3px 0 var(--shadow);resize:vertical;min-height:150px}
+.mrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mrow small{color:var(--muted);font-size:12.5px}
+.memotext{white-space:pre-line}
+.favempty svg{width:26px;height:auto;color:var(--sky-deep)}
 .fav svg{display:block;width:26px;height:30px}
 .fav:active{transform:scale(.9)}
 .favempty{display:flex;gap:12px;align-items:center}
@@ -299,6 +309,20 @@ mark{background:var(--sky);color:var(--on-sky);padding:0 2px}
       <button class="iconbtn" id="dclose" aria-label="닫기">X</button>
     </div>
     <div class="dbody" id="dbody"></div>
+  </div>
+</div>
+
+<div class="debate" id="memo" hidden>
+  <div class="scrim" id="mscrim"></div>
+  <div class="dpanel" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="dhead">
+      <div><span class="chip" id="mtag">메모</span><h3 id="mtitle"></h3></div>
+      <button class="iconbtn" id="mclose" aria-label="닫기">X</button>
+    </div>
+    <div class="dbody">
+      <textarea id="mtext" class="mtext" maxlength="2000" rows="7" aria-label="메모"></textarea>
+      <div class="mrow"><small id="mstat"></small><button class="pxbtn ghost" id="mdel" type="button">지우기</button></div>
+    </div>
   </div>
 </div>
 
@@ -487,9 +511,21 @@ const UI = {
   histSub:["HR과 노동의 주요 장면을 시간 순서로 따라가요.","Key moments in HR and labor, in order."],
   histKr:["한국","Korea"], histWorld:["세계","World"],
   sugName:["건의함","Suggestions"],
-  sugSub:["앱이나 학회에 바라는 점을 자유롭게 남겨 주세요. 남긴 글은 앱 관리자만 볼 수 있어요.","Tell us what you'd like from the app or the club. Only the app manager can read it."],
+  sugSub:["앱에 바라는 점이나 고칠 점을 자유롭게 남겨 주세요. 남긴 글은 앱 관리자만 볼 수 있어요.","Tell us what you'd like added or fixed in the app. Only the app manager can read it."],
   sugCat:["어떤 이야기인가요?","What is it about?"],
-  sugCats:[["feature",["앱 기능 제안","App idea"]],["content",["용어·트렌드 오류","Content fix"]],["club",["학회 운영","Club"]],["etc",["기타","Other"]]],
+  sugCats:[["feature",["앱 기능 제안","App idea"]],["content",["용어·트렌드 오류","Content fix"]],["etc",["기타","Other"]]],
+  trendCycle:["트렌드는 반기(1~6월·7~12월)마다 새로 시작해요. 즐겨찾기나 메모한 트렌드는 계속 남아요.","Trends restart every half-year (Jan–Jun, Jul–Dec). Trends you saved or noted stay."],
+  memo:["메모","Note"],
+  memoPh:["이 카드에 대한 내 생각, 예시, 시험 포인트 등을 적어 보세요.","Write your thoughts, examples or exam points about this card."],
+  memoLocal:["이 기기에만 저장돼요","Saved on this device only"],
+  memoSaved:["저장됐어요","Saved"],
+  memoDel:["지우기","Delete"],
+  memoDelSure:["한 번 더 누르면 지워져요","Tap again to delete"],
+  favTab:["즐겨찾기","Favorites"], memoTab:["메모","Notes"],
+  favsTitle:["즐겨찾기 · 메모","Favorites & Notes"],
+  memoEmpty:["아직 메모가 없어요. 카드 오른쪽 위 메모 버튼을 눌러 적어 보세요.","No notes yet. Tap the note button at the top right of a card."],
+  memoCount:n=>[`메모 ${n}개 · 누르면 그 카드로 가요`,`${n} notes · tap one to open its card`],
+  oldTrend:["지난 반기 트렌드","Earlier trend"],
   sugBody:["내용","Message"],
   sugPh:["예: 퀴즈에 트렌드 문제도 넣어 주세요","e.g. Please add trend questions to the quiz"],
   sugNick:["이름 또는 닉네임 (선택)","Name or nickname (optional)"],
@@ -581,7 +617,7 @@ function renderKindList(){
   const kname = L(kind==="term"?UI.kindTerm:UI.kindTrend);
   $("#brand").innerHTML = `${state.area.toUpperCase()}<small>${esc(kname)}</small>`;
   view.innerHTML = `
-  <div class="intro"><h1>${esc(L(A.name))} · ${esc(kname)}</h1><p>${esc(L(UI.pick))}</p></div>
+  <div class="intro"><h1>${esc(L(A.name))} · ${esc(kname)}</h1><p>${esc(L(kind==="trend"?UI.trendCycle:UI.pick))}</p></div>
   ${kind==="trend" ? `<div class="dtoggle"><span>${pxIcon(ICON.chat)}<span><b>${esc(L(UI.debLabel))}</b><small>${esc(L(UI.debHint))}</small></span></span>
     <button class="switch" id="dsw" role="switch" aria-checked="${DEBATE_ON}" aria-label="${esc(L(UI.debLabel))}"><span></span></button></div>` : ""}
   <div class="list">${A.cats.map((c,n)=>{
@@ -617,7 +653,10 @@ function showDeck(entries, crumb){
   <article class="card dcard" aria-live="polite">
     <div class="chiprow">
       <span class="chip ${isTrend?"trend":""}">${esc(L(isTrend?UI.trend:UI.term))}</span>
-      <button class="fav" id="fav" aria-pressed="${on}" aria-label="${esc(L(UI.favAdd))}">${bookmarkSVG(on)}</button>
+      <span class="cardtools">
+        <button class="memobtn ${MEMO[id]?"on":""}" id="memobtn" aria-label="${esc(L(UI.memo))}">${pxIcon(ICON.memo)}</button>
+        <button class="fav" id="fav" aria-pressed="${on}" aria-label="${esc(L(UI.favAdd))}">${bookmarkSVG(on)}</button>
+      </span>
     </div>
     <h2>${esc(L(it.t))}</h2>
     <p class="alt">${esc(it.t[1-lang])}</p>
@@ -636,7 +675,8 @@ function showDeck(entries, crumb){
   </nav>`;
   $("#prev").onclick=()=>step(-1);
   $("#next").onclick=()=>step(1);
-  $("#fav").onclick=()=>{ const now=toggleFav(id); const b=$("#fav"); b.innerHTML=bookmarkSVG(now); b.setAttribute("aria-pressed",now); };
+  $("#fav").onclick=()=>{ const now=toggleFav(id,a,it); const b=$("#fav"); b.innerHTML=bookmarkSVG(now); b.setAttribute("aria-pressed",now); };
+  $("#memobtn").onclick=()=>openMemo(id,a,it);
   const db=$("#debbtn"); if(db) db.onclick=()=>openDebate(it.debate);
 }
 
@@ -785,35 +825,93 @@ let FAV = [];
 try{ const v=JSON.parse(localStorage.getItem("hrp-favs")||"[]"); if(Array.isArray(v)) FAV=v.filter(x=>typeof x==="string"); }catch(e){}
 const favId = (a,it) => `${a}|${it.k}|${it.t[0]}`;   // Korean title is stable across trend updates
 const isFav = id => FAV.includes(id);
-function toggleFav(id){
+// A saved trend keeps a copy here, so it survives the half-year reset.
+let FAVSNAP = {};
+try{ const v=JSON.parse(localStorage.getItem("hrp-favsnap")||"{}"); if(v&&typeof v==="object") FAVSNAP=v; }catch(e){}
+const catOf = (a,it) => DATA[a] && DATA[a].cats.find(c=>c.items.includes(it));
+function snapOf(a,it){ const c=catOf(a,it); return {cat:c?c.id:"", t:it.t, b:it.b, src:it.src, added:it.added}; }
+function toggleFav(id,a,it){
   const n=FAV.indexOf(id);
-  if(n<0) FAV.unshift(id); else FAV.splice(n,1);    // newest favorite first
-  try{ localStorage.setItem("hrp-favs",JSON.stringify(FAV)); }catch(e){}
+  if(n<0){ FAV.unshift(id); if(it&&it.k==="trend") FAVSNAP[id]=snapOf(a,it); }    // newest favorite first
+  else { FAV.splice(n,1); delete FAVSNAP[id]; }
+  try{ localStorage.setItem("hrp-favs",JSON.stringify(FAV)); localStorage.setItem("hrp-favsnap",JSON.stringify(FAVSNAP)); }catch(e){}
   return n<0;
 }
-function favEntries(){
-  const out=[];
-  for(const id of FAV){
-    const [a,k,ko]=id.split("|");
-    if(!DATA[a]) continue;
-    for(const c of DATA[a].cats){ const it=kindItems(c,k).find(x=>x.t[0]===ko); if(it){ out.push({a,k,c,it}); break; } }
+// Find a card by its id: the live one if it still exists, else the saved copy of an old trend.
+function findCard(id, snap){
+  const [a,k,ko]=id.split("|");
+  if(!DATA[a]) return null;
+  for(const c of DATA[a].cats){ const items=kindItems(c,k), i=items.findIndex(x=>x.t[0]===ko); if(i>=0) return {a,k,c,i,it:items[i]}; }
+  if(k==="trend" && snap && Array.isArray(snap.t)){
+    const c=DATA[a].cats.find(x=>x.id===snap.cat) || DATA[a].cats[0];
+    return {a,k,c,i:-1,it:{k:"trend",t:snap.t,b:snap.b,src:snap.src,added:snap.added,old:true}};
   }
-  return out; // a trend that expired with its half-year simply drops out
+  return null;
 }
+function favEntries(){ return FAV.map(id=>findCard(id,FAVSNAP[id])).filter(Boolean); }
+
+/* ---------- Notes: one memo per card, kept in this browser only ---------- */
+let MEMO = {};
+try{ const v=JSON.parse(localStorage.getItem("hrp-memos")||"{}"); if(v&&typeof v==="object") MEMO=v; }catch(e){}
+function saveMemos(){ try{ localStorage.setItem("hrp-memos",JSON.stringify(MEMO)); }catch(e){} }
+let memoOpen=null, memoDelArmed=false;
+function openMemo(id,a,it){
+  memoOpen=id; memoDelArmed=false;
+  $("#mtag").textContent=L(UI.memo);
+  $("#mtitle").textContent=L(it.t);
+  const ta=$("#mtext"); ta.placeholder=L(UI.memoPh); ta.value=MEMO[id]?MEMO[id].text:"";
+  $("#mstat").textContent=L(UI.memoLocal);
+  $("#mdel").textContent=L(UI.memoDel);
+  $("#mdel").hidden=!MEMO[id];
+  ta.oninput=()=>{
+    const text=ta.value;
+    if(text.trim()){ MEMO[id]={text, ...snapOf(a,it), at:Date.now()}; }
+    else delete MEMO[id];
+    saveMemos();
+    $("#mstat").textContent=L(UI.memoSaved);
+    $("#mdel").hidden=!MEMO[id];
+  };
+  $("#mdel").onclick=()=>{
+    if(!memoDelArmed){ memoDelArmed=true; $("#mdel").textContent=L(UI.memoDelSure); return; }
+    delete MEMO[id]; saveMemos(); closeMemo();
+  };
+  $("#memo").hidden=false;
+  ta.focus();
+}
+function closeMemo(){ $("#memo").hidden=true; memoOpen=null; render(); }
+
+let favTab="fav";
 function renderFavList(){
-  $("#brand").innerHTML = `${esc(L(UI.favs))}`;
+  $("#brand").innerHTML = `${esc(L(UI.favsTitle))}`;
   const list=favEntries();
-  view.innerHTML = `
-  <div class="intro"><h1>${esc(L(UI.favs))}</h1><p>${esc(L(UI.favSub))}</p></div>
-  ${!list.length ? `<p class="hint favempty">${bookmarkSVG(false)}<span>${esc(L(UI.favEmpty))}</span></p>` :
-  `<p class="hint">${esc(L(UI.favCount(list.length)))}</p>
-   <div class="list favlist">${list.map((x,n)=>{
-     const tr=x.it.k==="trend";
-     return `<button class="hit" data-n="${n}">
-       <span class="path"><span class="k ${tr?"trend":""}">${esc(L(tr?UI.trend:UI.term))}</span>${x.a.toUpperCase()} › ${esc(L(x.c.t))}</span>
-       <span class="ht">${esc(L(x.it.t))}</span><span class="ha">${esc(x.it.t[1-lang])}</span>
-     </button>`;}).join("")}</div>`}`;
+  const memos=Object.entries(MEMO).sort((x,y)=>(y[1].at||0)-(x[1].at||0));
+  const tabs=`<div class="tabs" role="tablist">
+    <button role="tab" data-ft="fav" aria-selected="${favTab==="fav"}">${esc(L(UI.favTab))} ${list.length}</button>
+    <button role="tab" data-ft="memo" aria-selected="${favTab==="memo"}">${esc(L(UI.memoTab))} ${memos.length}</button></div>`;
+  const pathOf=(x)=>{ const tr=x.it.k==="trend"; return `<span class="path"><span class="k ${tr?"trend":""}">${esc(L(tr?(x.it.old?UI.oldTrend:UI.trend):UI.term))}</span>${x.a.toUpperCase()} › ${esc(L(x.c.t))}</span>`; };
+  let body;
+  if(favTab==="fav"){
+    body = !list.length ? `<p class="hint favempty">${bookmarkSVG(false)}<span>${esc(L(UI.favEmpty))}</span></p>` :
+    `<p class="hint">${esc(L(UI.favCount(list.length)))}</p>
+     <div class="list favlist">${list.map((x,n)=>`<button class="hit" data-n="${n}">${pathOf(x)}
+       <span class="ht">${esc(L(x.it.t))}</span><span class="ha">${esc(x.it.t[1-lang])}</span></button>`).join("")}</div>`;
+  } else {
+    const rows=memos.map(([id,m])=>({id,m,card:findCard(id,m)})).filter(r=>r.card);
+    body = !rows.length ? `<p class="hint favempty">${pxIcon(ICON.memo)}<span>${esc(L(UI.memoEmpty))}</span></p>` :
+    `<p class="hint">${esc(L(UI.memoCount(rows.length)))}</p>
+     <div class="list memolist">${rows.map((r,n)=>`<button class="hit" data-m="${n}">${pathOf(r.card)}
+       <span class="ht">${esc(L(r.card.it.t))}</span><span class="hs memotext">${esc(r.m.text.length>90?r.m.text.slice(0,90)+"…":r.m.text)}</span></button>`).join("")}</div>`;
+    view.innerHTML = `<div class="intro"><h1>${esc(L(UI.favsTitle))}</h1><p>${esc(L(UI.favSub))}</p></div>${tabs}${body}`;
+    view.querySelectorAll(".memolist .hit").forEach(b=>b.onclick=()=>{
+      const r=rows[+b.dataset.m], c=r.card;
+      if(c.i>=0) go(c.a,c.k,c.c.id,c.i); else openMemo(r.id,c.a,c.it);   // an old trend has no deck to open
+    });
+    view.querySelectorAll("[data-ft]").forEach(b=>b.onclick=()=>{ favTab=b.dataset.ft; renderFavList(); });
+    return;
+  }
+  view.innerHTML = `<div class="intro"><h1>${esc(L(UI.favsTitle))}</h1><p>${esc(L(UI.favSub))}</p></div>${tabs}${body}`;
   view.querySelectorAll(".favlist .hit").forEach(b=>b.onclick=()=>{ location.hash=`favs-${+b.dataset.n+1}`; });
+  view.querySelectorAll("[data-ft]").forEach(b=>b.onclick=()=>{ favTab=b.dataset.ft; renderFavList(); });
 }
 function renderFavDeck(){
   const entries=favEntries();
@@ -1011,6 +1109,7 @@ const ICON = {
   left:["...XX","..XX.",".XX..","XX...",".XX..","..XX.","...XX"],
   book:[".XXX..XXX.","X...XX...X","X.X.XX.X.X","X...XX...X","X.X.XX.X.X","X...XX...X","XXXXXXXXXX"],
   bm:["XXXXXXX","X.....X","X..X..X","X.XXX.X","X..X..X","X.....X","X..X..X","X.X.X.X","XX...XX"],
+  memo:["XXXXXXXX","X......X","X.XXXX.X","X......X","X.XXXX.X","X......X","X.XX...X","XXXXXXXX"],
   chat:["XXXXXXXXX","X.......X","X.X.X.X.X","X.......X","XXXXXXXXX","..XX.....",".X......."],
   road:["XXXXXXXX.",".......X.",".XXXXXXX.",".X.......",".XXXXXXXX"],
   mail:["XXXXXXXXX","XX.....XX","X.X...X.X","X..XXX..X","X.......X","X.......X","XXXXXXXXX"],
@@ -1185,10 +1284,13 @@ $("#q").addEventListener("keydown",e=>{
   if(e.key==="Escape") closeSearch();
 });
 $("#dclose").onclick=closeDebate;
+$("#mclose").onclick=closeMemo;
+$("#mscrim").onclick=closeMemo;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#memo").hidden){ e.stopPropagation(); closeMemo(); } },true);
 $("#dscrim").onclick=closeDebate;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#debate").hidden){ e.stopPropagation(); closeDebate(); } },true);
 document.addEventListener("keydown",e=>{
-  if(!$("#debate").hidden) return;
+  if(!$("#debate").hidden || !$("#memo").hidden) return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="f"){ e.preventDefault(); openSearch(); return; }
   if(!$("#search").hidden) return;
   if(e.key==="/"&&!e.target.closest("input")){ e.preventDefault(); openSearch(); return; }
