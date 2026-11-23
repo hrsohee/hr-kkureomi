@@ -14,7 +14,23 @@
     "src": {"name": "Gartner 보도자료 (2026.5.13)", "url": "https://www.gartner.com/en/newsroom/press-releases/2026-05-13-gartner-predicts-by-2027-50-percent-of-enterprises-without-a-people-centric-ai-strategy-will-lose-their-top-ai-talent"}, "added": "2026-11-16"},
    {"t": ["정년 65세 연장 논의 (논의 중)", "Retirement Age 65 Debate (Not Final)"],
     "b": ["법정 정년은 아직 60세이며, 65세로 단계적으로 늘리는 법안은 국회를 통과하지 않았습니다(논의 중). 여당 특위 초안은 2029년부터 2년마다 1세씩 올려 2037년 65세에 이르는 안으로 알려졌고, 10월 말 연내 처리를 촉구하는 목소리가 나왔습니다. 인력계획에서는 고령 인력과 임금체계 변화를 미리 검토해 둘 필요가 있습니다.", "The legal retirement age is still 60. A bill to raise it step by step to 65 has not passed yet. A ruling party draft reportedly raises it by 1 year every 2 years from 2029, reaching 65 in 2037. HR planners should start thinking about older workers and pay systems now."],
-    "src": {"name": "뉴시스 via 네이트 뉴스 (2026.10.27)", "url": "https://news.nate.com/view/20261027n26599"}, "added": "2026-11-16"}
+    "src": {"name": "뉴시스 via 네이트 뉴스 (2026.10.27)", "url": "https://news.nate.com/view/20261027n26599"},
+    "related": [
+     {"name": "매일노동뉴스 · 65세 정년 법안 처리 불투명 (11.12)", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=237686"}
+    ],
+    "debate": {
+     "q": ["법정 정년, 65세로 늘려야 할까?", "Should the legal retirement age rise to 65?"],
+     "turns": [
+      {"s": "pro", "t": ["국민연금을 받는 나이는 65세까지 늦춰지는데 정년은 60세라서, 소득이 끊기는 기간이 생겨요. 정년을 늘려 이 공백을 메워야 해요.", "The age for receiving the national pension is moving to 65, but retirement is at 60. That leaves years with no income. Raising the retirement age fills that gap."]},
+      {"s": "con", "t": ["정년만 늘리면 기업의 인건비가 크게 늘어요. 그만큼 청년을 새로 뽑는 자리가 줄어들 수 있어요.", "If only the retirement age goes up, labor costs rise a lot. Companies may then hire fewer young people."]},
+      {"s": "pro", "t": ["고령화로 일할 사람이 줄고 있어요. 숙련된 사람을 계속 쓰는 건 기업에도 이득이고, 단계적으로 올리면 충격도 줄어요.", "With an aging society, there are fewer workers. Keeping skilled people helps companies too, and raising it step by step softens the impact."]},
+      {"s": "con", "t": ["그렇다면 정년 연장보다, 퇴직 후 다시 고용하는 '재고용'이 더 유연해요. 임금과 역할을 새로 정할 수 있으니까요.", "Then rehiring after retirement is more flexible than raising the age. Pay and roles can be set again."]},
+      {"s": "pro", "t": ["재고용은 회사가 사람을 골라서 하는 방식이라 고용이 불안정해요. 임금체계 개편과 함께 법정 정년을 늘리는 게 더 확실해요.", "With rehiring, the company picks who stays, so jobs are less secure. Raising the legal age together with a new pay system is more certain."]},
+      {"s": "con", "t": ["결국 핵심은 임금체계네요. 근속에 따라 오르는 연공급을 직무나 성과 중심으로 바꾸지 않으면 갈등이 계속될 거예요.", "So the key is the pay system. Unless pay based on years of service changes to pay based on job or performance, the conflict will continue."]}
+     ],
+     "wrap": ["생각해 볼 질문: 정년 연장과 재고용 중, 내가 HR 담당자라면 회사에 어떤 방식을 제안하고 싶나요?", "Think about it: As an HR manager, would you suggest raising the retirement age or rehiring? Why?"]
+    },
+    "added": "2026-11-16"}
   ],
   "recruit": [
    {"t": ["채용 역량 1/3은 '사내 인재'로", "One-Third of Recruiting Goes Inside"],
@@ -53,12 +69,48 @@
     "src": {"name": "Mercer", "url": "https://www.mercer.com/en-us/about/newsroom/us-employers-stick-with-moderate-pay-increases-for-2027/"}, "added": "2026-11-16"}
   ],
   "ops": [
+   {"t": ["주 4.5일제 시범, 이직률이 줄었다", "4.5-Day Week Trial Cut Turnover"],
+    "b": ["11월 19일 정부 포럼에서 근로시간을 줄인 기업 사례가 공유됐습니다. 한 기업은 임금을 깎지 않고 주 35시간제를 도입해 이직률을 44%에서 16%로 낮췄습니다. 정부는 이런 중소기업에 1인당 연 최대 720만 원을 지원합니다(시범 사업, 법 제도 아님).", "At a government forum on November 19, companies shared how they cut working hours. One firm moved to a 35-hour week without cutting pay, and turnover fell from 44% to 16%. The government gives such small firms up to ₩7.2 million per worker a year. It is a pilot, not a law."],
+    "src": {"name": "고용노동부 보도자료 (2026.11.19)", "url": "https://www.moel.go.kr/news/enews/report/enewsView.do?news_seq=20277"},
+    "related": [
+     {"name": "뉴시스 · 상반기 224개사 참여 (7.14)", "url": "https://www.newsis.com/view/NISX20260714_0003707861"},
+     {"name": "더팩트 · 1인당 최대 720만 원 지원 (1.14)", "url": "https://news.tf.co.kr/read/life/2282260.htm"}
+    ],
+    "debate": {
+     "q": ["주 4.5일제, 더 많은 기업으로 넓혀야 할까?", "Should more companies move to a 4.5-day week?"],
+     "turns": [
+      {"s": "pro", "t": ["근로시간이 줄면 피로가 줄고 집중력이 올라가요. 실제로 한 참여 기업은 실근로시간이 줄면서 이직률이 44%에서 16%까지 내려갔어요.", "Shorter hours mean less tiredness and better focus. One company in the program saw turnover fall from 44% to 16%."]},
+      {"s": "con", "t": ["한두 기업 사례로 전체를 판단하긴 어려워요. 제조나 서비스처럼 누군가 자리를 지켜야 하는 일은, 시간을 줄이면 그만큼 사람이 더 필요해요.", "One or two cases can't prove it works everywhere. In factories or services, someone must always be there. Fewer hours means you need more people."]},
+      {"s": "pro", "t": ["그래서 정부가 1인당 지원금에 신규 채용 지원까지 함께 줘요. 사람을 더 뽑으면 일자리도 늘어나요.", "That's why the government pays per worker and also supports new hires. Hiring more people creates more jobs too."]},
+      {"s": "con", "t": ["지원금은 언젠가 끝나요. 지원이 끝난 뒤에도 임금을 그대로 주며 버틸 수 있을지, 특히 작은 회사가 감당할 수 있을지가 걱정이에요.", "Government money won't last forever. Can companies, especially small ones, keep paying the same wages after the support ends?"]},
+      {"s": "pro", "t": ["사람이 덜 떠나면 채용과 교육 비용이 줄어서 결국 비용을 메울 수 있어요. 일하는 방식을 바꾸는 계기도 되고요.", "If fewer people quit, hiring and training costs go down. That can cover the cost. It's also a chance to change how we work."]},
+      {"s": "con", "t": ["그 점은 동의해요. 다만 법으로 한꺼번에 강제하기보다, 금요일 단축이나 격주 휴무처럼 업종에 맞는 방식을 고르게 하는 게 현실적이에요.", "I agree with that part. But instead of forcing everyone by law, it's more realistic to let each industry choose, like short Fridays or a day off every other week."]}
+     ],
+     "wrap": ["생각해 볼 질문: 관심 있는 회사나 업종에서 4.5일제를 한다면, 어떤 직무가 가장 어렵고 어떤 방식이 맞을까요?", "Think about it: If a company you like tried a 4.5-day week, which jobs would find it hardest, and which way would work best?"]
+    },
+    "added": "2026-11-23"},
    {"t": ["노동자 추정제·일법 처리 불투명 (논의 중)", "Worker Presumption Bills Stalled (Not Final)"],
     "b": ["'일하는 사람 권리 기본법'과 '노동자 추정제' 등 노동 제정법들이 국회 기후에너지환경노동위원회에서 아직 처리되지 않았습니다(논의 중). 11월 중순 위원회 일정이 멈추면서 12월 초 정기국회 종료 전 통과 여부는 불투명합니다. 포괄임금 규제, 65세 정년 법안도 심사를 기다리고 있습니다.", "New labor bills, such as the Worker Rights Basic Act and the 'worker presumption' rule, have not passed yet. The labor committee stopped its schedule in mid-November, so passing them before the session ends in early December is uncertain. Bills on fixed overtime pay and retirement at 65 are also waiting."],
     "src": {"name": "매일노동뉴스 (2026.11.12)", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=237686"}, "added": "2026-11-23"},
    {"t": ["포괄임금제 금지법 국회 심사 (논의 중)", "Ban on All-Inclusive Wage Pay: Under Review"],
     "b": ["포괄임금제를 금지하거나 제한하는 근로기준법 개정안이 국회 고용노동법안심사소위에서 심사되고 있지만, 아직 통과·시행되지 않았습니다(논의 중). '전면 금지'안과 '합의 시 허용'안이 함께 논의됩니다. 고용노동부의 포괄임금 오남용 방지 지침은 2026년 2월부터 이미 시행 중입니다.", "A bill to ban or limit all-inclusive (fixed overtime) pay is being reviewed in the National Assembly. It is not law yet. One version bans it fully; another allows it with agreement. A Ministry guideline against misuse has already applied since February 2026."],
-    "src": {"name": "매일노동뉴스", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=233684"}, "added": "2026-11-16"},
+    "src": {"name": "매일노동뉴스", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=233684"},
+    "related": [
+     {"name": "매일노동뉴스 · 포괄임금 규제 처리 불투명 (11.12)", "url": "https://www.labortoday.co.kr/news/articleView.html?idxno=237686"}
+    ],
+    "debate": {
+     "q": ["포괄임금제, 법으로 금지해야 할까?", "Should all-inclusive wage pay be banned by law?"],
+     "turns": [
+      {"s": "pro", "t": ["포괄임금제는 '어차피 수당은 정해져 있다'는 생각 때문에 공짜 야근을 만들기 쉬워요. 일한 만큼 받는 게 원칙이에요.", "With fixed overtime pay, people think 'the extra pay is set anyway,' so unpaid overtime grows. You should be paid for the hours you work."]},
+      {"s": "con", "t": ["영업, 외근, 연구직처럼 근로시간을 정확히 재기 어려운 일도 있어요. 이런 직무까지 한꺼번에 금지하면 현장이 혼란스러워요.", "Some jobs, like sales, field work or research, are hard to measure in hours. Banning it for every job at once would cause confusion."]},
+      {"s": "pro", "t": ["요즘은 출퇴근 기록 앱처럼 시간을 재는 도구가 많아요. 정말 측정이 어려운 직무만 예외로 두면 돼요.", "Today there are many tools, like time-tracking apps. Only jobs that truly can't be measured need an exception."]},
+      {"s": "con", "t": ["금지되면 회사는 근태 기록과 수당 계산 같은 관리 부담이 커져요. 작은 회사일수록 준비할 시간이 필요해요.", "A ban means more work for companies, like tracking time and calculating overtime. Small companies especially need time to prepare."]},
+      {"s": "pro", "t": ["그래서 바로 전면 금지하기보다 유예 기간을 두는 안도 논의돼요. 장시간 근로를 줄이는 방향 자체는 맞다고 봐요.", "That's why a grace period is also being discussed. Still, I think reducing long working hours is the right direction."]},
+      {"s": "con", "t": ["방향에는 동의해요. 다만 노사가 합의하면 예외를 허용하는 것처럼 유연한 길도 남겨 둬야 해요.", "I agree with the direction. But we should keep some flexibility, like allowing exceptions when workers and employers agree."]}
+     ],
+     "wrap": ["생각해 볼 질문: 근로시간을 재기 어려운 직무는 어떻게 하면 공정하게 보상할 수 있을까요?", "Think about it: How can we pay fairly for jobs where working hours are hard to measure?"]
+    },
+    "added": "2026-11-16"},
    {"t": ["위험성평가 지침 전면 개정 (확정)", "Risk Assessment Guideline Fully Revised (Final)"],
     "b": ["고용노동부는 11월 4일 「사업장 위험성평가에 관한 지침」 전부개정을 발령했습니다(확정). 노동자대표가 원하면 참여시켜야 하고, 신규 입사자에게는 작업 전에 평가 결과를 알려야 합니다. 위험성평가 미실시 과태료는 50인 이상 사업장에 2027년 1월, 50인 미만은 2028년 1월부터 적용됩니다.", "On November 4, the Ministry issued a fully revised workplace risk assessment guideline. Worker representatives must be included if they ask, and new hires must see results before starting work. Fines for not doing assessments start in January 2027 for firms with 50+ workers, and January 2028 for smaller firms."],
     "src": {"name": "고용노동부 보도자료", "url": "https://moel.go.kr/news/enews/report/enewsView.do?news_seq=20194"}, "added": "2026-11-16"},

@@ -32,6 +32,7 @@ img{max-width:100%}
   --trend:#E3F6EA; --trend-ink:#1B6A43;
   --ok:#23864F; --ok-soft:#DDF4E6; --bad:#C8423D; --bad-soft:#FBE1E0;
   --scrim:rgba(18,48,74,.45);
+  --con-soft:#FFE9D6; --con-ink:#B4581E;
   --font-ui:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --font-pixel:"Press Start 2P","IBM Plex Sans KR","Malgun Gothic",monospace;
 }
@@ -42,7 +43,7 @@ img{max-width:100%}
   --hrm:#1F6FA6; --hrd:#2A84B8; --quiz:#3896C8; --on-sky:#F2FAFF;
   --trend:#123526; --trend-ink:#8FE0B4;
   --ok:#5FD69A; --ok-soft:#12382A; --bad:#FF8A85; --bad-soft:#3D1C1F;
-  --scrim:rgba(0,0,0,.6); color-scheme:dark;}}
+  --scrim:rgba(0,0,0,.6); --con-soft:#3A2A1E; --con-ink:#FFB27A; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#0B1826; --dot:#173350; --surface:#12263B; --ink:#E2F1FC; --muted:#93B1C8;
   --line:#7FBFE6; --soft-line:#24476A; --shadow:#02080F;
@@ -50,7 +51,7 @@ img{max-width:100%}
   --hrm:#1F6FA6; --hrd:#2A84B8; --quiz:#3896C8; --on-sky:#F2FAFF;
   --trend:#123526; --trend-ink:#8FE0B4;
   --ok:#5FD69A; --ok-soft:#12382A; --bad:#FF8A85; --bad-soft:#3D1C1F;
-  --scrim:rgba(0,0,0,.6); color-scheme:dark;}
+  --scrim:rgba(0,0,0,.6); --con-soft:#3A2A1E; --con-ink:#FFB27A; color-scheme:dark;}
 
 html,body{height:100%}
 /* keep Korean words whole when lines wrap; very long tokens (URLs) may still break */
@@ -78,8 +79,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:3px dashed var(
 main{flex:1;display:flex;flex-direction:column;min-width:0}
 
 /* Home */
-.home{flex:1;display:grid;grid-auto-rows:1fr;gap:18px;padding:0 4px 4px 0} /* fills what's left of the screen, no more */
-.big{appearance:none;cursor:pointer;text-align:left;padding:18px 16px 18px 20px;display:flex;align-items:center;gap:12px;color:var(--on-sky);min-height:150px;font:inherit}
+.home{flex:1;display:grid;grid-template-rows:repeat(3,minmax(118px,1fr)) auto;gap:16px;padding:0 4px 4px 0} /* fills what's left of the screen, no more */
+.big{appearance:none;cursor:pointer;text-align:left;padding:14px 16px 14px 20px;display:flex;align-items:center;gap:12px;color:var(--on-sky);font:inherit}
 .big.hrm{background:var(--hrm)} .big.hrd{background:var(--hrd)} .big.quiz{background:var(--quiz)}
 .big .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .big .code{font-family:var(--font-pixel);font-size:clamp(24px,7.5vw,34px);line-height:1}
@@ -129,6 +130,79 @@ main{flex:1;display:flex;flex-direction:column;min-width:0}
 .card .ex b{color:var(--sky-deep);font-weight:700;margin-right:6px}
 .card .asof{margin-top:auto;color:var(--muted);font-size:12.5px}
 .chiprow{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+/* related articles + debate button on trend cards */
+.rel{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--muted);margin-top:-4px}
+.rel b{color:var(--ink);font-size:12px}
+.card.dcard{gap:8px}
+.debbtn{appearance:none;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;border:2px solid var(--line);background:var(--con-soft);color:var(--ink);padding:4px 10px;font:700 13.5px var(--font-ui);cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}
+.debbtn svg{width:16px;height:auto;color:var(--con-ink)}
+.debbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+/* debate on/off switch on the trend list */
+.dtoggle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-4px 4px 14px 0;padding:10px 12px;border:2px dashed var(--soft-line);background:var(--surface)}
+.dtoggle>span{display:flex;gap:10px;align-items:center;min-width:0}
+.dtoggle>span>svg{width:18px;height:auto;flex:none;color:var(--con-ink)}
+.dtoggle b{display:block;font-size:14px}
+.dtoggle small{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+.switch{appearance:none;flex:none;position:relative;width:52px;height:28px;border:3px solid var(--line);background:var(--soft-line);cursor:pointer;padding:0}
+.switch span{position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--muted);transition:transform .12s steps(2)}
+.switch[aria-checked="true"]{background:var(--sky)}
+.switch[aria-checked="true"] span{transform:translateX(24px);background:var(--line)}
+/* debate sheet */
+.debate{position:fixed;inset:0;z-index:20}
+.dpanel{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:480px;max-height:88%;display:flex;flex-direction:column;background:var(--bg);border:3px solid var(--line);border-bottom:0;box-shadow:0 -4px 0 var(--shadow);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;padding:14px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:3px dashed var(--soft-line)}
+.dhead h3{margin:8px 0 0;font-size:18px;line-height:1.35;text-wrap:balance}
+.dbody{overflow-y:auto;padding:14px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.dnote{margin:0;font-size:12.5px;color:var(--muted)}
+.turn{display:flex;gap:8px;align-items:flex-start}
+.turn.con{flex-direction:row-reverse}
+.turn img{width:30px;height:30px;flex:none;image-rendering:pixelated}
+.turn .bub{max-width:80%;border:2px solid var(--line);padding:8px 11px;box-shadow:3px 3px 0 var(--shadow)}
+.turn.pro .bub{background:var(--sky-soft)} .turn.con .bub{background:var(--con-soft)}
+.turn .who{display:block;font-size:11.5px;font-weight:700;color:var(--sky-deep);margin-bottom:2px}
+.turn.con .who{color:var(--con-ink);text-align:right}
+.turn p{margin:0;font-size:14.5px;line-height:1.55}
+.dwrap{margin:4px 0 0;padding:10px 12px;border:2px dashed var(--soft-line);background:var(--surface);font-size:14px;font-weight:600}
+.doff{align-self:center;appearance:none;background:none;border:0;color:var(--muted);text-decoration:underline;font:13px var(--font-ui);cursor:pointer;padding:6px}
+@media (prefers-reduced-motion:no-preference){.turn{animation:pop .2s steps(3,end) both;animation-delay:calc(var(--i) * 90ms)}}
+/* lobby: two small tiles under the big buttons */
+.minis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini{appearance:none;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:10px;background:var(--surface);color:var(--ink);font:700 15px var(--font-ui);cursor:pointer;border:3px solid var(--line);box-shadow:4px 4px 0 var(--shadow)}
+.mini svg{width:22px;height:auto;color:var(--sky-deep)}
+.mini:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--shadow)}
+/* timeline */
+.tabs{display:flex;gap:10px;margin:0 0 16px}
+.tabs button{appearance:none;flex:1;padding:8px;border:3px solid var(--line);background:var(--surface);color:var(--ink);font:700 14px var(--font-ui);cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}
+.tabs button[aria-selected="true"]{background:var(--sky);color:var(--on-sky)}
+.tl{padding:0 4px 24px 0}
+.tl-row{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 20px 20px;border-top:8px solid var(--sky)}
+.tl-row.rev{direction:rtl}
+.tl-row.rev>*{direction:ltr}
+.tl-row:not(:last-child)::after{content:"";position:absolute;top:-8px;bottom:0;right:0;width:8px;background:var(--sky)}
+.tl-row.rev:not(:last-child)::after{right:auto;left:0}
+.tl-item{display:flex;flex-direction:column;gap:3px;min-width:0}
+.tl-item .y{display:flex;align-items:center;gap:6px;font:11px/1 var(--font-pixel);color:var(--sky-deep)}
+.tl-item .y::before{content:"";width:8px;height:8px;background:var(--sky-deep);flex:none}
+.tl-item .tt{font-size:14.5px;line-height:1.35}
+.tl-item .td{font-size:12.5px;line-height:1.45;color:var(--muted)}
+/* suggestion box */
+.sugform{display:flex;flex-direction:column;gap:14px;padding-right:4px}
+.sugform fieldset{border:0;margin:0;padding:0}
+.sugform legend,.fld>span{font-weight:700;font-size:14px;margin-bottom:6px;padding:0}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.catpill input{position:absolute;opacity:0;pointer-events:none}
+.catpill span{display:inline-block;padding:6px 11px;border:2px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;cursor:pointer}
+.catpill input:checked+span{background:var(--sky);color:var(--on-sky)}
+.catpill input:focus-visible+span{outline:3px dashed var(--sky-deep);outline-offset:2px}
+.fld{display:flex;flex-direction:column}
+.fld textarea,.fld input{border:3px solid var(--line);background:var(--surface);color:var(--ink);font:15px/1.55 var(--font-ui);padding:10px 12px;border-radius:0;box-shadow:3px 3px 0 var(--shadow);resize:vertical;width:100%;box-sizing:border-box}
+.fld .cnt{align-self:flex-end;margin-top:6px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hp{position:absolute;left:-9999px;width:1px;height:1px}
+.smsg{margin:0;min-height:1.4em;font-size:13.5px;color:var(--bad)}
+.sugform .pxbtn{align-self:flex-end;min-width:120px}
+.sugform .pxbtn:disabled{opacity:.6;cursor:default}
+.sugdone{align-items:center;text-align:center;gap:14px;padding:28px 18px}
+.sugdone svg{width:39px;height:45px}
 .fav{appearance:none;border:0;background:none;padding:2px;margin:-8px -8px 0 0;cursor:pointer;line-height:0;flex:none}
 .fav svg{display:block;width:26px;height:30px}
 .fav:active{transform:scale(.9)}
@@ -146,7 +220,7 @@ main{flex:1;display:flex;flex-direction:column;min-width:0}
 .pbtn{appearance:none;border:2px solid var(--line);width:44px;height:44px;background:var(--sky);color:var(--on-sky);cursor:pointer;display:grid;place-items:center}
 .pbtn:disabled{background:var(--sky-soft);color:var(--muted);cursor:default;transform:none}
 .pbtn svg{width:14px;height:20px}
-.spacer{flex:none;height:68px} /* room for the floating < > pager */
+.spacer{flex:none;height:62px} /* room for the floating < > pager */
 
 /* Search */
 .search{position:fixed;inset:0;z-index:20}
@@ -215,6 +289,17 @@ mark{background:var(--sky);color:var(--on-sky);padding:0 2px}
     <button class="iconbtn" id="lang" aria-pressed="false" title="English / 한국어">Aa</button>
   </header>
   <main id="view"></main>
+</div>
+
+<div class="debate" id="debate" hidden>
+  <div class="scrim" id="dscrim"></div>
+  <div class="dpanel" role="dialog" aria-modal="true" aria-labelledby="dq">
+    <div class="dhead">
+      <div><span class="chip trend" id="dtag">AI 찬반 토론</span><h3 id="dq"></h3></div>
+      <button class="iconbtn" id="dclose" aria-label="닫기">X</button>
+    </div>
+    <div class="dbody" id="dbody"></div>
+  </div>
 </div>
 
 <div class="search" id="search" hidden>
@@ -390,6 +475,31 @@ const UI = {
   favSub:["이 기기에만 저장돼요. 다른 사람과 섞이지 않아요.","Saved on this device only. Never shared with others."],
   favEmpty:["아직 즐겨찾기한 카드가 없어요. 카드 오른쪽 위 책갈피를 누르면 여기에 모여요.","No favorites yet. Tap the bookmark at the top right of a card to save it here."],
   favCount:n=>[`${n}개 저장됨 · 누르면 카드로 넘겨 볼 수 있어요`,`${n} saved · tap one to flip through them`],
+  related:["관련 기사","Related articles"],
+  debOpen:["AI 찬반 토론 보기","See the AI debate"],
+  debTitle:["AI 찬반 토론","AI pro/con debate"],
+  debLabel:["AI 찬반 토론","AI debates"],
+  debHint:["끄면 트렌드 카드에 토론 버튼이 안 보여요","Turn off to hide debate buttons on trend cards"],
+  debNote:["AI 두 명이 찬성과 반대 입장으로 나눠 이야기하는 가상 토론이에요. 생각을 넓히는 용도로 보고, 사실은 카드의 출처로 확인하세요.","Two AIs argue for and against. It's a made-up debate to help you think. Check the facts with the card's sources."],
+  debOff:["토론 기능 끄기","Turn off debates"],
+  pro:["찬성 AI","Pro AI"], con:["반대 AI","Con AI"],
+  histName:["HR 연대기","HR Timeline"],
+  histSub:["HR과 노동의 주요 장면을 시간 순서로 따라가요.","Key moments in HR and labor, in order."],
+  histKr:["한국","Korea"], histWorld:["세계","World"],
+  sugName:["건의함","Suggestions"],
+  sugSub:["앱이나 학회에 바라는 점을 자유롭게 남겨 주세요. 남긴 글은 앱 관리자만 볼 수 있어요.","Tell us what you'd like from the app or the club. Only the app manager can read it."],
+  sugCat:["어떤 이야기인가요?","What is it about?"],
+  sugCats:[["feature",["앱 기능 제안","App idea"]],["content",["용어·트렌드 오류","Content fix"]],["club",["학회 운영","Club"]],["etc",["기타","Other"]]],
+  sugBody:["내용","Message"],
+  sugPh:["예: 퀴즈에 트렌드 문제도 넣어 주세요","e.g. Please add trend questions to the quiz"],
+  sugNick:["이름 또는 닉네임 (선택)","Name or nickname (optional)"],
+  sugNickPh:["비워 두면 익명으로 보내져요","Leave empty to send anonymously"],
+  sugSend:["보내기","Send"], sugSending:["보내는 중…","Sending…"],
+  sugShort:["내용을 2글자 이상 적어 주세요.","Please write at least 2 characters."],
+  sugWait:["방금 보냈어요. 1분 뒤에 다시 보낼 수 있어요.","You just sent one. You can send again in a minute."],
+  sugFail:["보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.","Couldn't send. Check your internet connection and try again."],
+  sugDone:["보냈어요! 소중한 의견 고마워요.","Sent! Thanks for your idea."],
+  sugAgain:["하나 더 보내기","Send another"],
   kindTerm:["용어","Terms"], kindTrend:["트렌드","Trends"],
   kindTermSub:["분야별 용어와 개념","Key terms and concepts"],
   kindTrendSub:["이번 반기 소식, 최신 순","This half-year, newest first"],
@@ -414,10 +524,12 @@ function render(){
   $("#back").setAttribute("aria-label", L(UI.back));
   $("#find").setAttribute("aria-label", L(UI.find));
   $("#favbtn").setAttribute("aria-label", L(UI.favs));
-  $("#deco").hidden = !state.area; // food garnish only on inner screens, not the lobby
+  $("#deco").hidden = !state.area || state.area==="history" || state.area==="suggest"; // food garnish only on card screens
   if(!state.area) return renderHome();
   if(state.area==="quiz") return renderQuiz();
   if(state.area==="favs") return state.cat ? renderFavDeck() : renderFavList();
+  if(state.area==="history") return renderHistory();
+  if(state.area==="suggest") return renderSuggest();
   if(!state.kind) return renderArea();
   if(!state.cat) return renderKindList();
   renderDetail();
@@ -434,6 +546,10 @@ function renderHome(){
     ${big("hrm","HRM",L(DATA.hrm.name),L(UI.hrmSub))}
     ${big("hrd","HRD",L(DATA.hrd.name),L(UI.hrdSub))}
     ${big("quiz","QUIZ",L(UI.quizName),L(UI.quizSub))}
+    <div class="minis">
+      <button class="mini" data-go="history">${pxIcon(ICON.road)}<span>${esc(L(UI.histName))}</span></button>
+      <button class="mini" data-go="suggest">${pxIcon(ICON.mail)}<span>${esc(L(UI.sugName))}</span></button>
+    </div>
   </div>`;
   view.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
 }
@@ -466,6 +582,8 @@ function renderKindList(){
   $("#brand").innerHTML = `${state.area.toUpperCase()}<small>${esc(kname)}</small>`;
   view.innerHTML = `
   <div class="intro"><h1>${esc(L(A.name))} · ${esc(kname)}</h1><p>${esc(L(UI.pick))}</p></div>
+  ${kind==="trend" ? `<div class="dtoggle"><span>${pxIcon(ICON.chat)}<span><b>${esc(L(UI.debLabel))}</b><small>${esc(L(UI.debHint))}</small></span></span>
+    <button class="switch" id="dsw" role="switch" aria-checked="${DEBATE_ON}" aria-label="${esc(L(UI.debLabel))}"><span></span></button></div>` : ""}
   <div class="list">${A.cats.map((c,n)=>{
     const cnt=kindItems(c,kind).length;
     return `<button class="cat ${kind==="trend"?"tr":""}" data-cat="${c.id}">
@@ -474,6 +592,7 @@ function renderKindList(){
       <span class="cnt">${esc(L(kind==="term"?UI.cntTerm(cnt):UI.cntTrend(cnt)))}</span>
     </button>`}).join("")}</div>`;
   view.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>go(state.area,kind,b.dataset.cat,0));
+  const sw=$("#dsw"); if(sw) sw.onclick=()=>{ setDebate(!DEBATE_ON); sw.setAttribute("aria-checked",DEBATE_ON); };
 }
 
 function renderDetail(){
@@ -504,7 +623,9 @@ function showDeck(entries, crumb){
     <p class="alt">${esc(it.t[1-lang])}</p>
     <p class="body">${esc(L(it.b))}</p>
     ${ex}
+    ${isTrend && it.debate && DEBATE_ON ? `<button class="debbtn" id="debbtn">${pxIcon(ICON.chat)}<span>${esc(L(UI.debOpen))}</span></button>` : ""}
     ${isTrend?`<span class="asof">${esc(addedLabel(it.added))}${srcLink(it.src)}</span>`:(it.src?`<span class="asof">${srcLink(it.src).replace(/^ · /,"")}</span>`:"")}
+    ${isTrend && it.related && it.related.length ? `<span class="rel"><b>${esc(L(UI.related))}</b>${it.related.map(r=>`<a class="src" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.name||r.url)}</a>`).join("")}</span>` : ""}
   </article>
   <div class="dots" aria-hidden="true">${entries.map((x,n)=>`<span class="dot ${x.it.k==="trend"?"tr":""} ${n===state.i?"on":""}"></span>`).join("")}</div>
   <div class="spacer"></div>
@@ -516,6 +637,147 @@ function showDeck(entries, crumb){
   $("#prev").onclick=()=>step(-1);
   $("#next").onclick=()=>step(1);
   $("#fav").onclick=()=>{ const now=toggleFav(id); const b=$("#fav"); b.innerHTML=bookmarkSVG(now); b.setAttribute("aria-pressed",now); };
+  const db=$("#debbtn"); if(db) db.onclick=()=>openDebate(it.debate);
+}
+
+/* ---------- AI pro/con debates on trend cards (pre-written, shown as a chat) ---------- */
+function okDebate(d){
+  const pair=v=>Array.isArray(v)&&v.length===2&&v.every(s=>typeof s==="string");
+  if(!d||!pair(d.q)||!Array.isArray(d.turns)||!d.turns.length) return null;
+  if(!d.turns.every(x=>x&&(x.s==="pro"||x.s==="con")&&pair(x.t))) return null;
+  return {q:d.q, turns:d.turns, wrap:pair(d.wrap)?d.wrap:null};
+}
+function okRelated(r){
+  return Array.isArray(r) ? r.filter(x=>x&&typeof x.url==="string"&&/^https:\/\//.test(x.url)).slice(0,4) : [];
+}
+let DEBATE_ON = true;   // per device: people who don't want debates can switch them off
+try{ DEBATE_ON = localStorage.getItem("hrp-debate")!=="off"; }catch(e){}
+function setDebate(on){ DEBATE_ON=on; try{ localStorage.setItem("hrp-debate", on?"on":"off"); }catch(e){} }
+let openDebateData=null;
+function openDebate(d){
+  openDebateData=d;
+  $("#dq").textContent=L(d.q);
+  $("#dtag").textContent=L(UI.debTitle);
+  $("#dbody").innerHTML=`
+    <p class="dnote">${esc(L(UI.debNote))}</p>
+    ${d.turns.map((x,n)=>`<div class="turn ${x.s}" style="--i:${n}">
+      <img src="${spriteURL(x.s)}" alt="" width="30" height="30">
+      <div class="bub"><span class="who">${esc(L(x.s==="pro"?UI.pro:UI.con))}</span><p>${esc(L(x.t))}</p></div>
+    </div>`).join("")}
+    ${d.wrap?`<p class="dwrap">${esc(L(d.wrap))}</p>`:""}
+    <button class="doff" id="doff">${esc(L(UI.debOff))}</button>`;
+  $("#debate").hidden=false;
+  $("#dbody").scrollTop=0;
+  $("#doff").onclick=()=>{ setDebate(false); closeDebate(); render(); };
+  $("#dclose").focus();
+}
+function closeDebate(){ $("#debate").hidden=true; openDebateData=null; }
+
+/* ---------- HR timeline: a winding road, two stops per row ---------- */
+const HISTORY = {
+  kr: [
+    {y:"1953", t:["노동관계법 제정","First labor laws"], d:["근로기준법·노동조합법 등이 만들어져 근로조건의 최저 기준이 처음 법으로 정해졌어요.","The Labor Standards Act and union laws set the first legal minimum working conditions."]},
+    {y:"1988", t:["최저임금제 시행","Minimum wage begins"], d:["모든 일하는 사람이 받아야 할 최소 임금이 생겼어요.","A minimum wage for workers started."]},
+    {y:"1995", t:["고용보험 시행","Employment insurance"], d:["실업급여와 직업훈련을 지원하는 고용보험이 시작됐어요.","Insurance for jobless benefits and job training began."]},
+    {y:"1998", t:["정리해고·파견제 법제화","Layoffs and dispatch work made legal"], d:["외환위기 속에 경영상 해고와 근로자 파견이 법으로 정해졌어요.","After the 1997 financial crisis, layoffs for business reasons and temp agency work became legal."]},
+    {y:"2004", t:["주 5일제 시작","Five-day week begins"], d:["법정 근로시간이 주 40시간으로 줄고, 큰 사업장부터 단계적으로 적용됐어요.","Legal hours fell to 40 a week, starting with large workplaces."]},
+    {y:"2005", t:["퇴직연금 도입","Retirement pensions"], d:["퇴직금을 회사 밖 금융기관에 쌓아 두는 퇴직연금제가 생겼어요.","Retirement pay could now be saved in outside financial accounts."]},
+    {y:"2007", t:["비정규직 보호법","Protection for non-regular workers"], d:["기간제 근로자를 2년 넘게 쓰면 무기계약으로 보도록 했어요.","Fixed-term workers employed over 2 years are treated as permanent."]},
+    {y:"2016", t:["정년 60세 의무화","Retirement age 60"], d:["300인 이상 사업장부터 정년을 60세 이상으로 정하도록 했어요.","Companies had to set retirement at 60 or older, starting with large firms."]},
+    {y:"2018", t:["주 52시간제","52-hour workweek"], d:["연장근로를 포함해 1주 최대 52시간으로 제한됐어요.","Work, including overtime, was capped at 52 hours a week."]},
+    {y:"2019", t:["직장 내 괴롭힘 금지","Workplace bullying ban"], d:["직장 내 괴롭힘을 법으로 금지하고 회사의 조치 의무를 정했어요.","Bullying at work was banned, and companies must act on reports."]},
+    {y:"2022", t:["중대재해처벌법 시행","Serious Accidents Act"], d:["중대한 산업재해가 나면 경영책임자도 처벌받을 수 있게 됐어요.","Top managers can be punished for serious workplace accidents."]},
+    {y:"2024", t:["통상임금 판례 변경","New ordinary wage ruling"], d:["대법원이 '고정성' 기준을 없애, 조건부 상여금도 통상임금이 될 수 있게 됐어요.","The Supreme Court dropped the 'fixedness' test, so conditional bonuses can count as ordinary wage."]},
+    {y:"2025", t:["육아휴직 최대 1년 6개월","Parental leave up to 1.5 years"], d:["부모 모두 3개월 이상 쓰면 각각 1년 6개월까지 쓸 수 있게 됐어요.","If both parents take 3+ months, each can take up to 1.5 years."]},
+    {y:"2026", t:["노동조합법 개정 시행","Trade Union Act amendment"], d:["원청의 사용자 책임을 넓히고 파업 손해배상 청구를 제한했어요.","Prime contractors gained employer duties, and damage claims against strikes were limited."]}
+  ],
+  world: [
+    {y:"1911", t:["테일러 『과학적 관리법』","Taylor's Scientific Management"], d:["작업을 측정하고 표준화해 효율을 높이자는 생각이 퍼졌어요.","Measuring and standardizing work to raise efficiency."]},
+    {y:"1913", t:["포드 이동식 조립라인","Ford's moving assembly line"], d:["대량 생산 시대가 열리고 일의 방식이 크게 바뀌었어요.","Mass production began and changed how people work."]},
+    {y:"1924", t:["호손 실험","Hawthorne studies"], d:["사람의 관심과 관계가 생산성에 영향을 준다는 '인간관계론'이 시작됐어요.","Showed that attention and relationships affect productivity."]},
+    {y:"1943", t:["매슬로 욕구 단계설","Maslow's hierarchy of needs"], d:["사람의 동기를 생리·안전부터 자아실현까지 단계로 설명했어요.","Explained motivation as levels, from basic needs to self-actualization."]},
+    {y:"1954", t:["드러커 목표관리(MBO)","Drucker's MBO"], d:["상사와 직원이 함께 목표를 정하고 평가하는 방식이 소개됐어요.","Managers and employees set goals together and review them."]},
+    {y:"1959", t:["커크패트릭 4단계","Kirkpatrick's four levels"], d:["반응·학습·행동·결과로 교육 효과를 평가하는 틀이 나왔어요.","A model to measure training: reaction, learning, behavior, results."]},
+    {y:"1960", t:["맥그리거 X이론·Y이론","McGregor's Theory X and Y"], d:["사람을 통제할 대상으로 볼지, 스스로 일하는 존재로 볼지를 대비했어요.","Contrasted controlling people with trusting them to work on their own."]},
+    {y:"1964", t:["미국 민권법 7편","US Civil Rights Act, Title VII"], d:["인종·성별 등에 따른 고용 차별을 금지했어요.","Banned job discrimination based on race, sex and more."]},
+    {y:"1984", t:["하버드 HRM 모델","Harvard HRM model"], d:["사람을 비용이 아닌 '관리할 자산'으로 보는 HRM 개념이 퍼졌어요.","Spread the idea of people as assets, not just costs."]},
+    {y:"1997", t:["맥킨지 '인재 전쟁'","McKinsey's 'War for Talent'"], d:["뛰어난 인재 확보가 기업 경쟁력의 핵심이라는 말이 유행했어요.","Made winning top talent a key business goal."]},
+    {y:"1999", t:["심리적 안전감 연구","Psychological safety research"], d:["에드먼드슨이 팀이 실수를 말할 수 있어야 배운다는 연구를 냈어요.","Edmondson showed teams learn when people can speak up safely."]},
+    {y:"2015", t:["구글 아리스토텔레스 프로젝트","Google's Project Aristotle"], d:["좋은 팀의 첫째 조건으로 심리적 안전감을 꼽은 결과가 공개됐어요.","Found psychological safety was the top trait of effective teams."]},
+    {y:"2020", t:["원격근무 확산","Remote work goes mainstream"], d:["코로나19로 재택·하이브리드 근무가 빠르게 퍼졌어요.","COVID-19 quickly spread remote and hybrid work."]},
+    {y:"2022", t:["생성형 AI 등장","Generative AI arrives"], d:["ChatGPT 공개 이후 채용·교육·평가 등 HR 업무 전반에 AI가 들어오기 시작했어요.","After ChatGPT, AI entered hiring, training and reviews."]}
+  ]
+};
+let histTab = "kr";
+function renderHistory(){
+  $("#brand").innerHTML = esc(L(UI.histName));
+  const items = HISTORY[histTab], rows=[];
+  for(let i=0;i<items.length;i+=2) rows.push(items.slice(i,i+2));
+  view.innerHTML = `
+  <div class="intro"><h1>${esc(L(UI.histName))}</h1><p>${esc(L(UI.histSub))}</p></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="kr" aria-selected="${histTab==="kr"}">${esc(L(UI.histKr))}</button>
+    <button role="tab" data-tab="world" aria-selected="${histTab==="world"}">${esc(L(UI.histWorld))}</button>
+  </div>
+  <div class="tl">${rows.map((r,n)=>`<div class="tl-row ${n%2?"rev":""}">${r.map(x=>`
+    <div class="tl-item"><span class="y">${esc(x.y)}</span><b class="tt">${esc(L(x.t))}</b><span class="td">${esc(L(x.d))}</span></div>`).join("")}${r.length<2?"<div></div>":""}</div>`).join("")}</div>`;
+  view.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{ histTab=b.dataset.tab; renderHistory(); });
+}
+
+/* ---------- Suggestion box: sends to Supabase. The table only allows adding rows;
+   reading them is possible only in the Supabase dashboard. This key is the public one by design. ---------- */
+const SUPABASE = {url:"https://aqxfpodmjvccxwlcgouh.supabase.co", key:"sb_publishable_Tun-s95GrJFk_-kOGeEpOQ_YK_ees7s"};
+let sugDraft = {cat:"feature", body:"", nick:"", sent:false, msg:""};
+function renderSuggest(){
+  $("#brand").innerHTML = esc(L(UI.sugName));
+  if(sugDraft.sent){
+    view.innerHTML = `
+    <div class="intro"><h1>${esc(L(UI.sugName))}</h1></div>
+    <div class="card sugdone">${bookmarkSVG(true)}<p class="body">${esc(L(UI.sugDone))}</p>
+      <button class="pxbtn" id="sagain">${esc(L(UI.sugAgain))}</button></div>`;
+    $("#sagain").onclick=()=>{ sugDraft={cat:"feature",body:"",nick:"",sent:false,msg:""}; renderSuggest(); };
+    return;
+  }
+  view.innerHTML = `
+  <div class="intro"><h1>${esc(L(UI.sugName))}</h1><p>${esc(L(UI.sugSub))}</p></div>
+  <form class="sugform" id="sugform" novalidate>
+    <fieldset><legend>${esc(L(UI.sugCat))}</legend>
+      <div class="cats">${UI.sugCats.map(([v,l])=>`<label class="catpill"><input type="radio" name="cat" value="${v}" ${sugDraft.cat===v?"checked":""}><span>${esc(L(l))}</span></label>`).join("")}</div>
+    </fieldset>
+    <label class="fld" for="sbody"><span>${esc(L(UI.sugBody))}</span>
+      <textarea id="sbody" maxlength="1000" rows="4" placeholder="${esc(L(UI.sugPh))}">${esc(sugDraft.body)}</textarea>
+      <small class="cnt" id="scnt">${sugDraft.body.length} / 1000</small></label>
+    <label class="fld" for="snick"><span>${esc(L(UI.sugNick))}</span>
+      <input id="snick" maxlength="20" autocomplete="nickname" placeholder="${esc(L(UI.sugNickPh))}" value="${esc(sugDraft.nick)}"></label>
+    <input class="hp" id="swebsite" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <p class="smsg" id="smsg" role="status">${esc(sugDraft.msg)}</p>
+    <button class="pxbtn" id="ssend" type="submit">${esc(L(UI.sugSend))}</button>
+  </form>`;
+  const f=$("#sugform"), body=$("#sbody"), nick=$("#snick"), msg=$("#smsg");
+  f.querySelectorAll("input[name=cat]").forEach(r=>r.onchange=()=>{ sugDraft.cat=r.value; });
+  body.oninput=()=>{ sugDraft.body=body.value; $("#scnt").textContent=`${body.value.length} / 1000`; };
+  nick.oninput=()=>{ sugDraft.nick=nick.value; };
+  f.onsubmit=async e=>{
+    e.preventDefault();
+    const content=body.value.trim(), name=nick.value.trim();
+    const say=t=>{ sugDraft.msg=t; msg.textContent=t; };
+    if($("#swebsite").value){ sugDraft.sent=true; return renderSuggest(); } // bot trap
+    if([...content].length<2) return say(L(UI.sugShort));
+    let last=0; try{ last=+localStorage.getItem("hrp-sug-at")||0; }catch(_){}
+    if(Date.now()-last<60000) return say(L(UI.sugWait));
+    const btn=$("#ssend"); btn.disabled=true; btn.textContent=L(UI.sugSending); say("");
+    try{
+      const res=await fetch(`${SUPABASE.url}/rest/v1/suggestions`,{method:"POST",
+        headers:{"apikey":SUPABASE.key,"Content-Type":"application/json","Prefer":"return=minimal"},
+        body:JSON.stringify({category:sugDraft.cat, content, nickname:name||null})});
+      if(!res.ok) throw new Error(res.status);
+      try{ localStorage.setItem("hrp-sug-at",String(Date.now())); }catch(_){}
+      sugDraft={cat:"feature",body:"",nick:"",sent:true,msg:""};
+      renderSuggest();
+    }catch(err){
+      btn.disabled=false; btn.textContent=L(UI.sugSend); say(L(UI.sugFail));
+    }
+  };
 }
 
 /* ---------- Favorites: kept in this browser only (localStorage), so every phone has its own ---------- */
@@ -617,7 +879,7 @@ function applyTrends(j){
   for(const a of ["hrm","hrd"]) for(const c of DATA[a].cats){
     const list=Array.isArray(j.cats[c.id])?j.cats[c.id]:[];
     const ok=list.filter(x=>x&&Array.isArray(x.t)&&Array.isArray(x.b)&&x.t.length===2&&x.b.length===2&&thisHalf(x.added||j.updated))
-      .map((x,n)=>({k:"trend",t:x.t,b:x.b,src:x.src,added:x.added||j.updated,n}))
+      .map((x,n)=>({k:"trend",t:x.t,b:x.b,src:x.src,added:x.added||j.updated,n,related:okRelated(x.related),debate:okDebate(x.debate)}))
       .sort((p,q)=>q.added.localeCompare(p.added)||p.n-q.n); // newest first, file order within a day
     c.items=c.items.filter(x=>x.k==="term").concat(ok);
   }
@@ -731,6 +993,10 @@ function buildDeco(){
     return `<img src="${spriteURL(d.s)}" alt="" width="${w}" height="${h}" style="${d.pos};transform:rotate(${d.rot}deg)">`;
   }).join("");
 }
+/* two little debate robots: blue = pro, orange = con */
+const ROBOT=["....YY....","....KK....",".KKKKKKKK.",".KWWWWWWK.",".KWEWWEWK.",".KWWWWWWK.",".KWWMMWWK.",".KKKKKKKK.","..KBBBBK..","..KKKKKK.."];
+SPRITES.pro={pal:{K:"#1d2b3a",Y:"#ffd23f",W:"#9fd6f5",E:"#1d2b3a",M:"#1c76b5",B:"#5aa9e6"},px:ROBOT};
+SPRITES.con={pal:{K:"#3a2418",Y:"#ffd23f",W:"#ffbe8a",E:"#3a2418",M:"#c8584e",B:"#f08a3c"},px:ROBOT};
 const spriteCache = {};
 function spriteURL(name){
   if(spriteCache[name]) return spriteCache[name];
@@ -745,6 +1011,9 @@ const ICON = {
   left:["...XX","..XX.",".XX..","XX...",".XX..","..XX.","...XX"],
   book:[".XXX..XXX.","X...XX...X","X.X.XX.X.X","X...XX...X","X.X.XX.X.X","X...XX...X","XXXXXXXXXX"],
   bm:["XXXXXXX","X.....X","X..X..X","X.XXX.X","X..X..X","X.....X","X..X..X","X.X.X.X","XX...XX"],
+  chat:["XXXXXXXXX","X.......X","X.X.X.X.X","X.......X","XXXXXXXXX","..XX.....",".X......."],
+  road:["XXXXXXXX.",".......X.",".XXXXXXX.",".X.......",".XXXXXXXX"],
+  mail:["XXXXXXXXX","XX.....XX","X.X...X.X","X..XXX..X","X.......X","X.......X","XXXXXXXXX"],
   spark:["...X...","...X...","..XXX..","XXXXXXX","..XXX..","...X...","...X..."],
   right:["XX...",".XX..","..XX.","...XX","..XX.",".XX..","XX..."]
 };
@@ -881,7 +1150,9 @@ function read(){
   const prev = state.area;
   state.area=null; state.kind=null; state.cat=null; state.i=0;
   const fm = h.match(/^favs(?:-(\d+))?$/);
-  if(fm){
+  if(h==="history"||h==="suggest"){
+    state.area=h;
+  } else if(fm){
     state.area="favs";
     if(fm[1]){ state.cat="deck"; state.i=Math.max(+fm[1]-1,0); }
   } else if(h==="quiz"){
@@ -913,7 +1184,11 @@ $("#q").addEventListener("keydown",e=>{
   if(e.key==="Enter"&&hits.length){ e.preventDefault(); openHit(0); }
   if(e.key==="Escape") closeSearch();
 });
+$("#dclose").onclick=closeDebate;
+$("#dscrim").onclick=closeDebate;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#debate").hidden){ e.stopPropagation(); closeDebate(); } },true);
 document.addEventListener("keydown",e=>{
+  if(!$("#debate").hidden) return;
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="f"){ e.preventDefault(); openSearch(); return; }
   if(!$("#search").hidden) return;
   if(e.key==="/"&&!e.target.closest("input")){ e.preventDefault(); openSearch(); return; }
